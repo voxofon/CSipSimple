@@ -173,21 +173,21 @@ public class CallHandlerPlugin {
         if (AVAILABLE_HANDLERS == null) {
             AVAILABLE_HANDLERS = new HashMap<String, String>();
 
-            PackageManager packageManager = ctxt.getPackageManager();
-            Intent it = new Intent(SipManager.ACTION_GET_PHONE_HANDLERS);
-
-            List<ResolveInfo> availables = packageManager.queryBroadcastReceivers(it, 0);
-            for (ResolveInfo resInfo : availables) {
-                ActivityInfo actInfos = resInfo.activityInfo;
-                Log.d(THIS_FILE, "Found call handler " + actInfos.packageName + " " + actInfos.name);
-                if (packageManager.checkPermission(permission.PROCESS_OUTGOING_CALLS,
-                        actInfos.packageName) == PackageManager.PERMISSION_GRANTED) {
-                    String packagedActivityName = (new ComponentName(actInfos.packageName,
-                            actInfos.name)).flattenToString();
-                    AVAILABLE_HANDLERS.put(packagedActivityName,
-                            (String) resInfo.loadLabel(packageManager));
-                }
-            }
+//            PackageManager packageManager = ctxt.getPackageManager();
+//            Intent it = new Intent(SipManager.ACTION_GET_PHONE_HANDLERS);
+//
+//            List<ResolveInfo> availables = packageManager.queryBroadcastReceivers(it, 0);
+//            for (ResolveInfo resInfo : availables) {
+//                ActivityInfo actInfos = resInfo.activityInfo;
+//                Log.d(THIS_FILE, "Found call handler " + actInfos.packageName + " " + actInfos.name);
+//                if (packageManager.checkPermission(permission.PROCESS_OUTGOING_CALLS,
+//                        actInfos.packageName) == PackageManager.PERMISSION_GRANTED) {
+//                    String packagedActivityName = (new ComponentName(actInfos.packageName,
+//                            actInfos.name)).flattenToString();
+//                    AVAILABLE_HANDLERS.put(packagedActivityName,
+//                            (String) resInfo.loadLabel(packageManager));
+//                }
+//            }
         }
 
         return AVAILABLE_HANDLERS;

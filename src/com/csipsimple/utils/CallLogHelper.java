@@ -53,6 +53,8 @@ public class CallLogHelper {
 		    result = contentResolver.insert(CallLog.Calls.CONTENT_URI, values);
 		}catch(IllegalArgumentException e) {
 		    Log.w(THIS_FILE, "Cannot insert call log entry. Probably not a phone", e);
+		}catch(SecurityException e2) {
+			Log.w(THIS_FILE, "Not allowed to insert a call log entry", e2);
 		}
 		
 		if(result != null) {

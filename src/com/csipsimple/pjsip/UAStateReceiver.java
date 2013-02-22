@@ -54,6 +54,7 @@ import com.csipsimple.service.SipService.SameThreadException;
 import com.csipsimple.service.SipService.SipRunnable;
 import com.csipsimple.service.impl.SipCallSessionImpl;
 import com.csipsimple.utils.CallLogHelper;
+import com.csipsimple.utils.CustomDistribution;
 import com.csipsimple.utils.Log;
 import com.csipsimple.utils.Threading;
 import com.csipsimple.utils.TimerWrapper;
@@ -851,6 +852,7 @@ public class UAStateReceiver extends Callback {
 			
 			// Launch activity to choose what to do with this call
 			Intent callHandlerIntent = new Intent(SipManager.ACTION_SIP_CALL_UI);
+			CustomDistribution.prepareIntent(callHandlerIntent);
 			callHandlerIntent.putExtra(SipManager.EXTRA_CALL_INFO, currentCallInfo2);
 			callHandlerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP  );
 			

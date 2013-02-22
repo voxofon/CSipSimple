@@ -38,6 +38,7 @@ import com.csipsimple.api.ISipService;
 import com.csipsimple.api.SipManager;
 import com.csipsimple.api.SipProfile;
 import com.csipsimple.utils.Compatibility;
+import com.csipsimple.utils.CustomDistribution;
 import com.csipsimple.utils.Log;
 import com.csipsimple.utils.PreferencesProviderWrapper;
 import com.csipsimple.utils.UriUtils;
@@ -160,6 +161,7 @@ public class OutgoingCallChooser extends SherlockFragmentActivity {
     private void connectService() {
         PreferencesProviderWrapper prefsWrapper = new PreferencesProviderWrapper(this);
         Intent sipService = new Intent(SipManager.INTENT_SIP_SERVICE);
+		CustomDistribution.prepareIntent(sipService);
         if (prefsWrapper.isValidConnectionForOutgoing()) {
             sipService.putExtra(SipManager.EXTRA_OUTGOING_ACTIVITY, getComponentName());
             startService(sipService);
@@ -209,6 +211,7 @@ public class OutgoingCallChooser extends SherlockFragmentActivity {
      */
     public void finishServiceIfNeeded(boolean defer) {
         Intent intent = new Intent(defer ? SipManager.ACTION_DEFER_OUTGOING_UNREGISTER : SipManager.ACTION_OUTGOING_UNREGISTER);
+        CustomDistribution.prepareIntent(intent);
         intent.putExtra(SipManager.EXTRA_OUTGOING_ACTIVITY, getComponentName());
         sendBroadcast(intent);
         finish();
