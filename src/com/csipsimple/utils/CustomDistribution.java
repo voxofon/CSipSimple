@@ -23,6 +23,7 @@
 package com.csipsimple.utils;
 
 import android.content.Intent;
+import android.os.Build;
 
 import com.csipsimple.wizards.WizardUtils.WizardInfo;
 
@@ -63,7 +64,7 @@ public final class CustomDistribution {
 	 * @return the default user agent
 	 */
 	public static String getUserAgent() {
-		return "Voxofon 4.0.0 (Android)";
+		return "Voxofon 4.0.0 (Android " + Build.VERSION.RELEASE + ' ' + Build.VERSION.SDK_INT + ')';
 	}
 	
 	/**
