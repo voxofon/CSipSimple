@@ -235,6 +235,7 @@ public class SipNotifications {
         nb.setTicker(tickerText);
         nb.setWhen(when);
 		Intent notificationIntent = new Intent(SipManager.ACTION_SIP_DIALER);
+		CustomDistribution.prepareIntent(notificationIntent);
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		
@@ -346,6 +347,7 @@ public class SipNotifications {
 		}
 
 		Intent notificationIntent = new Intent(SipManager.ACTION_SIP_CALLLOG);
+		CustomDistribution.prepareIntent(notificationIntent);
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -381,6 +383,7 @@ public class SipNotifications {
 			}
 
 			Intent notificationIntent = new Intent(SipManager.ACTION_SIP_MESSAGES);
+			CustomDistribution.prepareIntent(notificationIntent);
 			notificationIntent.putExtra(SipMessage.FIELD_FROM, msg.getFrom());
 			notificationIntent.putExtra(SipMessage.FIELD_BODY, msg.getBody());
 			notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -416,6 +419,7 @@ public class SipNotifications {
         } else {
             notificationIntent = new Intent(SipManager.ACTION_SIP_DIALER);
         }
+		CustomDistribution.prepareIntent(notificationIntent);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         contentIntent = PendingIntent.getActivity(context, 0, notificationIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
