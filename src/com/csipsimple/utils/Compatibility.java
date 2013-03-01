@@ -421,7 +421,7 @@ public final class Compatibility {
         preferencesWrapper.setCodecPriority("PCMU/8000/1", SipConfigManager.CODEC_WB, "60");
         preferencesWrapper.setCodecPriority("PCMA/8000/1", SipConfigManager.CODEC_WB, "50");
         preferencesWrapper.setCodecPriority("speex/8000/1", SipConfigManager.CODEC_WB, "0"); 
-        preferencesWrapper.setCodecPriority("speex/16000/1", SipConfigManager.CODEC_WB, "0");
+        preferencesWrapper.setCodecPriority("speex/16000/1", SipConfigManager.CODEC_WB, "209");
         preferencesWrapper.setCodecPriority("speex/32000/1", SipConfigManager.CODEC_WB, "0");
         preferencesWrapper.setCodecPriority("GSM/8000/1", SipConfigManager.CODEC_WB, "0");
         preferencesWrapper.setCodecPriority("G722/16000/1", SipConfigManager.CODEC_WB,
@@ -430,8 +430,8 @@ public final class Compatibility {
         preferencesWrapper.setCodecPriority("iLBC/8000/1", SipConfigManager.CODEC_WB, "0");
         preferencesWrapper.setCodecPriority("SILK/8000/1", SipConfigManager.CODEC_WB, "0");
         preferencesWrapper.setCodecPriority("SILK/12000/1", SipConfigManager.CODEC_WB, "0");
-        preferencesWrapper.setCodecPriority("SILK/16000/1", SipConfigManager.CODEC_WB, "0");
-        preferencesWrapper.setCodecPriority("SILK/24000/1", SipConfigManager.CODEC_WB, "220");
+        preferencesWrapper.setCodecPriority("SILK/16000/1", SipConfigManager.CODEC_WB, "210");
+        preferencesWrapper.setCodecPriority("SILK/24000/1", SipConfigManager.CODEC_WB, "0");
         preferencesWrapper.setCodecPriority("CODEC2/8000/1", SipConfigManager.CODEC_WB, "0");
         preferencesWrapper.setCodecPriority("G7221/16000/1", SipConfigManager.CODEC_WB, "0");
         preferencesWrapper.setCodecPriority("G7221/32000/1", SipConfigManager.CODEC_WB, "0");
