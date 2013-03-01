@@ -472,7 +472,7 @@ public final class Compatibility {
         preferencesWrapper.setCodecPriority("PCMU/8000/1", SipConfigManager.CODEC_WB, "60");
         preferencesWrapper.setCodecPriority("PCMA/8000/1", SipConfigManager.CODEC_WB, "50");
         preferencesWrapper.setCodecPriority("speex/8000/1", SipConfigManager.CODEC_WB, "0");
-        preferencesWrapper.setCodecPriority("speex/16000/1", SipConfigManager.CODEC_WB, "0");
+        preferencesWrapper.setCodecPriority("speex/16000/1", SipConfigManager.CODEC_WB, "209");
         preferencesWrapper.setCodecPriority("speex/32000/1", SipConfigManager.CODEC_WB, "0");
         preferencesWrapper.setCodecPriority("GSM/8000/1", SipConfigManager.CODEC_WB, "0");
         preferencesWrapper.setCodecPriority("G722/16000/1", SipConfigManager.CODEC_WB,
