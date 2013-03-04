@@ -333,8 +333,8 @@ public class PjSipAccount {
             // TODO - video?
             rtpCfg.setQos_type(pj_qos_type.PJ_QOS_TYPE_VOICE);
             pj_qos_params qosParam = rtpCfg.getQos_params();
-            
-            short dscpVal = (short) prefs.getDSCPVal();
+            // Default for RTP layer is different than default for SIP layer.
+            short dscpVal = (short) prefs.getPreferenceIntegerValue(SipConfigManager.DSCP_RTP_VAL);
             if(profile_qos_dscp >= 0) {
                 // If not set, we don't need to change dscp value
                 dscpVal = (short) profile_qos_dscp;
@@ -342,9 +342,7 @@ public class PjSipAccount {
                 qosParam.setFlags((short) 1); // DSCP
             }
         }
-        
 	}
-	
 	
 	/**
 	 * @return the displayName
