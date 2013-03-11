@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="take_call">Répondre</string>
-  <string name="decline_call">Ignorer</string>
+  <string name="ignore_call">Ignorer</string>
+  <string name="reject_call">Rejeter</string>
   <string name="clear_call">Raccrocher</string>
   <string name="touch_lock">Tapotter deux fois pour débloquer</string>
   <string name="dialpad">Clavier</string>
