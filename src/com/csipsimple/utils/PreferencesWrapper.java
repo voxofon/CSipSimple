@@ -157,9 +157,9 @@ public class PreferencesWrapper {
         put(SipConfigManager.ENABLE_STUN2, false);
 		put(SipConfigManager.ENABLE_QOS, false);
 		put(SipConfigManager.USE_COMPACT_FORM, false);
-		put(SipConfigManager.USE_WIFI_IN, true);
+		put(SipConfigManager.USE_WIFI_IN, false);
 		put(SipConfigManager.USE_WIFI_OUT, true);
-		put(SipConfigManager.USE_OTHER_IN, true);
+		put(SipConfigManager.USE_OTHER_IN, false);
 		put(SipConfigManager.USE_OTHER_OUT, true);
 		put(SipConfigManager.USE_3G_IN, false);
 		put(SipConfigManager.USE_3G_OUT, false);
@@ -202,8 +202,8 @@ public class PreferencesWrapper {
 		put(SipConfigManager.ICON_IN_STATUS_BAR, true);
 		put(SipConfigManager.USE_PARTIAL_WAKE_LOCK, false);
 		put(SipConfigManager.ICON_IN_STATUS_BAR_NBR, false);
-		put(SipConfigManager.INTEGRATE_WITH_CALLLOGS, true);
-		put(SipConfigManager.INTEGRATE_WITH_DIALER, true);
+		put(SipConfigManager.INTEGRATE_WITH_CALLLOGS, false);
+		put(SipConfigManager.INTEGRATE_WITH_DIALER, false);
 		put(SipConfigManager.INTEGRATE_TEL_PRIVILEGED, false);
 		put(HAS_BEEN_QUIT, false);
 		put(HAS_ALREADY_SETUP_SERVICE, false);
