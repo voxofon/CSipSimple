@@ -70,6 +70,7 @@ public final class PjSipCalls {
             
             // Update state here because we have pjsip_event here and can get q.850 state
             if(e != null) {
+                // Status code
                 int status_code = pjsua.get_event_status_code(e);
                 if(status_code == 0) {
                     try {
@@ -83,10 +84,17 @@ public final class PjSipCalls {
                 // TODO - get comment from q.850 state as well
                 String status_text = PjSipService.pjStrToString(pjInfo.getLast_status_text());
                 session.setLastStatusComment(status_text);
+                
+                // Reason code
+                int reason_code = pjsua.get_event_reason_code(e);
+                if (reason_code != 0) {
+                    session.setLastReasonCode(reason_code);
+                }
             }
             
             // And now, about secure information
-            String secureInfo = PjSipService.pjStrToString(pjsua.call_secure_info(session
+            session.setSignalisationSecure(pjsua.call_secure_sig_level(session.getCallId()));
+            String secureInfo = PjSipService.pjStrToString(pjsua.call_secure_media_info(session
                     .getCallId()));
             session.setMediaSecureInfo(secureInfo);
             session.setMediaSecure(!TextUtils.isEmpty(secureInfo));

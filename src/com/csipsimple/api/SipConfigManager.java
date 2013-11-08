@@ -439,6 +439,15 @@ public class SipConfigManager {
      */
     public static final String THEME = "selected_theme";
     /**
+     * Package to manage calls UI.<br/>
+     * The package that will handle calls user interface.
+     * Might be moved as per account later.
+     * If invalid or empty the self application package will be used.
+     * 
+     * @see #setPreferenceStringValue(Context, String, String)
+     */
+    public static final String CALL_UI_PACKAGE = "call_ui_package";
+    /**
      * Display the icon status bar when registered? <br/>
      * Warning, disabling that will unflag the application as important in
      * backgroud. And android may decide to kill it more frequently
@@ -553,13 +562,17 @@ public class SipConfigManager {
      * @see #setPreferenceStringValue(Context, String, String)
      */
     public static final String RINGTONE = "ringtone";
+    
     /**
-     * Should the application present buttons instead of slider?<br/>
-     * By default the application will use this mode for tablets
+     * Type of locker the app will use for in call view<br/>
+     * 0 : let app decide
+     * 1 : sliding tab
+     * 2: buttons
+     * 3 : glow pad
      * 
-     * @see #setPreferenceBooleanValue(Context, String, boolean)
+     * @see #setPreferenceIntegerValue(Context, String, boolean)
      */
-    public static final String USE_ALTERNATE_UNLOCKER = "use_alternate_unlocker";
+    public static final String UNLOCKER_TYPE = "unlocker_type";
     /**
      * Start application dialer UI with text dialer instead of digit dialer.
      * By default false.

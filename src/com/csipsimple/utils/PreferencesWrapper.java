@@ -98,7 +98,7 @@ public class PreferencesWrapper {
 		put(SipConfigManager.SIP_AUDIO_MODE, "0");
 		put(SipConfigManager.MICRO_SOURCE, "1");
 		put(SipConfigManager.THREAD_COUNT, "0");
-        put(SipConfigManager.MEDIA_THREAD_COUNT, "2");
+        put(SipConfigManager.MEDIA_THREAD_COUNT, "1");
 		put(SipConfigManager.HEADSET_ACTION, "0");
 		put(SipConfigManager.AUDIO_IMPLEMENTATION, "0");
 		put(SipConfigManager.H264_PROFILE, "66");
@@ -129,9 +129,11 @@ public class PreferencesWrapper {
 		put(SipConfigManager.DIAL_PRESS_TONE_MODE, Integer.toString(SipConfigManager.GENERIC_TYPE_AUTO));
 		put(SipConfigManager.DIAL_PRESS_VIBRATE_MODE, Integer.toString(SipConfigManager.GENERIC_TYPE_AUTO));
         put(SipConfigManager.DTMF_PRESS_TONE_MODE, Integer.toString(SipConfigManager.GENERIC_TYPE_PREVENT));
+        put(SipConfigManager.UNLOCKER_TYPE, Integer.toString(SipConfigManager.GENERIC_TYPE_AUTO));
 		
 		put(SipConfigManager.DEFAULT_CALLER_ID, "");
 		put(SipConfigManager.THEME, "");
+        put(SipConfigManager.CALL_UI_PACKAGE, "");
 		put(SipConfigManager.RINGTONE, "");
 		
 		
@@ -203,7 +205,6 @@ public class PreferencesWrapper {
 		put(SipConfigManager.INTEGRATE_WITH_CALLLOGS, true);
 		put(SipConfigManager.INTEGRATE_WITH_DIALER, true);
 		put(SipConfigManager.INTEGRATE_TEL_PRIVILEGED, false);
-		put(SipConfigManager.USE_ALTERNATE_UNLOCKER, false);
 		put(HAS_BEEN_QUIT, false);
 		put(HAS_ALREADY_SETUP_SERVICE, false);
 		put(SipConfigManager.LOG_USE_DIRECT_FILE, false);

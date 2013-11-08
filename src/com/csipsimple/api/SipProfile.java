@@ -418,6 +418,14 @@ public class SipProfile implements Parcelable {
      */
     public static final String FIELD_TRANSPORT = "transport";
     /**
+     * Default scheme to automatically add for this account when calling without uri scheme.<br/>
+     * 
+     * This is free field but should be one of :
+     * sip, sips, tel
+     * If invalid (or empty) will automatically fallback to sip
+     */
+    public static final String FIELD_DEFAULT_URI_SCHEME = "default_uri_scheme";
+    /**
      * Way the application should use SRTP. <br/>
      * <a target="_blank" href=
      * "http://www.pjsip.org/pjsip/docs/html/structpjsua__acc__config.htm#a34b00edb1851924a99efd8fedab917ba"
@@ -671,7 +679,7 @@ public class SipProfile implements Parcelable {
      * the REGISTER request, as long as the request uses the same transport
      * instance as the previous REGISTER request. <br/>
      *
-     * Default: true <br/>
+     * Default: false <br/>
      * <a target="_blank" href=
      * "http://www.pjsip.org/pjsip/docs/html/structpjsua__acc__config.htm"
      * >Pjsip documentation</a>
@@ -680,6 +688,20 @@ public class SipProfile implements Parcelable {
      */
     public static final String FIELD_ALLOW_VIA_REWRITE = "allow_via_rewrite";
 
+    /**
+     * This option controls whether the IP address in SDP should be replaced
+     * with the IP address found in Via header of the REGISTER response, ONLY
+     * when STUN and ICE are not used. If the value is FALSE (the original
+     * behavior), then the local IP address will be used. If TRUE, and when
+     * STUN and ICE are disabled, then the IP address found in registration
+     * response will be used.
+     *
+     * Default:no
+     * 
+     * @see Boolean
+     */
+    public static final String FIELD_ALLOW_SDP_NAT_REWRITE = "allow_sdp_nat_rewrite";
+    
     /**
      * Control the use of STUN for the SIP signaling.
      */
@@ -776,6 +798,10 @@ public class SipProfile implements Parcelable {
      */
     public Integer transport = 0;
     /**
+     * @see #FIELD_DEFAULT_URI_SCHEME
+     */
+    public String default_uri_scheme  = "sip";
+    /**
      * @see #FIELD_ACTIVE
      */
     public boolean active = true;
@@ -824,6 +850,10 @@ public class SipProfile implements Parcelable {
      * @see #FIELD_ALLOW_VIA_REWRITE
      */
     public boolean allow_via_rewrite = false;
+    /**
+     * @see #FIELD_ALLOW_SDP_NAT_REWRITE
+     */
+    public boolean allow_sdp_nat_rewrite = false;
     /**
      * Exploded array of proxies
      * 
@@ -1065,6 +1095,8 @@ public class SipProfile implements Parcelable {
         initial_auth = (in.readInt() != 0);
         auth_algo = getReadParcelableString(in.readString());
         wizard_data = getReadParcelableString(in.readString());
+        default_uri_scheme = getReadParcelableString(in.readString());
+        allow_sdp_nat_rewrite = (in.readInt() != 0);
     }
 
     /**
@@ -1153,6 +1185,8 @@ public class SipProfile implements Parcelable {
         dest.writeInt(initial_auth ? 1 : 0);
         dest.writeString(getWriteParcelableString(auth_algo));
         dest.writeString(getWriteParcelableString(wizard_data));
+        dest.writeString(getWriteParcelableString(default_uri_scheme));
+        dest.writeInt(allow_sdp_nat_rewrite ? 1 : 0);
     }
 
     // Yes yes that's not clean but well as for now not problem with that.
@@ -1201,6 +1235,10 @@ public class SipProfile implements Parcelable {
         tmp_i = args.getAsInteger(FIELD_TRANSPORT);
         if (tmp_i != null) {
             transport = tmp_i;
+        }
+        tmp_s = args.getAsString(FIELD_DEFAULT_URI_SCHEME);
+        if (tmp_s != null) {
+            default_uri_scheme = tmp_s;
         }
 
         tmp_i = args.getAsInteger(FIELD_ACTIVE);
@@ -1267,6 +1305,10 @@ public class SipProfile implements Parcelable {
         tmp_i = args.getAsInteger(FIELD_ALLOW_VIA_REWRITE);
         if (tmp_i != null) {
             allow_via_rewrite = (tmp_i == 1);
+        }
+        tmp_i = args.getAsInteger(FIELD_ALLOW_SDP_NAT_REWRITE);
+        if (tmp_i != null) {
+            allow_sdp_nat_rewrite = (tmp_i == 1);
         }
 
         tmp_i = args.getAsInteger(FIELD_USE_SRTP);
@@ -1449,6 +1491,7 @@ public class SipProfile implements Parcelable {
         args.put(FIELD_WIZARD, wizard);
         args.put(FIELD_DISPLAY_NAME, display_name);
         args.put(FIELD_TRANSPORT, transport);
+        args.put(FIELD_DEFAULT_URI_SCHEME, default_uri_scheme);
         args.put(FIELD_WIZARD_DATA, wizard_data);
 
         args.put(FIELD_PRIORITY, priority);
@@ -1462,6 +1505,7 @@ public class SipProfile implements Parcelable {
         args.put(FIELD_FORCE_CONTACT, force_contact);
         args.put(FIELD_ALLOW_CONTACT_REWRITE, allow_contact_rewrite ? 1 : 0);
         args.put(FIELD_ALLOW_VIA_REWRITE, allow_via_rewrite ? 1 : 0);
+        args.put(FIELD_ALLOW_SDP_NAT_REWRITE, allow_sdp_nat_rewrite ? 1 : 0);
         args.put(FIELD_CONTACT_REWRITE_METHOD, contact_rewrite_method);
         args.put(FIELD_USE_SRTP, use_srtp);
         args.put(FIELD_USE_ZRTP, use_zrtp);

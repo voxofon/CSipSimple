@@ -42,6 +42,7 @@ import android.util.SparseArray;
 
 import com.csipsimple.R;
 import com.csipsimple.api.SipCallSession;
+import com.csipsimple.api.SipCallSession.StatusCode;
 import com.csipsimple.api.SipConfigManager;
 import com.csipsimple.api.SipManager;
 import com.csipsimple.api.SipManager.PresenceStatus;
@@ -51,15 +52,18 @@ import com.csipsimple.api.SipUri;
 import com.csipsimple.api.SipUri.ParsedSipContactInfos;
 import com.csipsimple.service.MediaManager;
 import com.csipsimple.service.SipNotifications;
+import com.csipsimple.service.SipService;
 import com.csipsimple.service.SipService.SameThreadException;
 import com.csipsimple.service.SipService.SipRunnable;
 import com.csipsimple.service.impl.SipCallSessionImpl;
 import com.csipsimple.utils.CallLogHelper;
+import com.csipsimple.utils.Compatibility;
 import com.csipsimple.utils.Log;
 import com.csipsimple.utils.Threading;
 import com.csipsimple.utils.TimerWrapper;
 
 import org.pjsip.pjsua.Callback;
+import org.pjsip.pjsua.SWIGTYPE_p_int;
 import org.pjsip.pjsua.SWIGTYPE_p_pjsip_rx_data;
 import org.pjsip.pjsua.pj_str_t;
 import org.pjsip.pjsua.pj_stun_nat_detect_result;
@@ -130,7 +134,7 @@ public class UAStateReceiver extends Callback {
                             // If there is an ongoing call and we do not support
                             // multiple calls
                             // Send busy here
-                            pjsua.call_hangup(callId, 486, null, null);
+                            pjsua.call_hangup(callId, StatusCode.BUSY_HERE, null, null);
                             unlockCpu();
                             return;
                         } else {
@@ -232,6 +236,22 @@ public class UAStateReceiver extends Callback {
             unlockCpu();
         }
 
+    }
+
+    @Override
+    public void on_call_tsx_state(int call_id, org.pjsip.pjsua.SWIGTYPE_p_pjsip_transaction tsx, pjsip_event e) {
+        lockCpu();
+
+        Log.d(THIS_FILE, "Call TSX state <<");
+        try {
+            updateCallInfoFromStack(call_id, e);
+            Log.d(THIS_FILE, "Call TSX state >>");
+        } catch (SameThreadException ex) {
+            // We don't care about that we are at least in a pjsua thread
+        } finally {
+            // Unlock CPU anyway
+            unlockCpu();
+        }
     }
 
     @Override
@@ -384,9 +404,12 @@ public class UAStateReceiver extends Callback {
              * Connect ports appropriately when media status is ACTIVE or REMOTE
              * HOLD, otherwise we should NOT connect the ports.
              */
+            boolean connectToOtherCalls = false;
+            int callConfSlot = callInfo.getConfPort();
             if (callInfo.getMediaStatus() == SipCallSession.MediaState.ACTIVE ||
                     callInfo.getMediaStatus() == SipCallSession.MediaState.REMOTE_HOLD) {
-                int callConfSlot = callInfo.getConfPort();
+                
+                connectToOtherCalls = true;
                 pjsua.conf_connect(callConfSlot, 0);
                 pjsua.conf_connect(0, callConfSlot);
 
@@ -401,7 +424,32 @@ public class UAStateReceiver extends Callback {
                     pjService
                             .startRecording(callId, SipManager.BITMASK_IN | SipManager.BITMASK_OUT);
                 }
+            }
+            
 
+            // Connects/disconnnect to other active calls (for conferencing).
+            synchronized (callsList) {
+                if (callsList != null) {
+                    for (int i = 0; i < callsList.size(); i++) {
+                        SipCallSessionImpl otherCallInfo = getCallInfo(i);
+                        if (otherCallInfo != null && otherCallInfo != callInfo) {
+                            int otherMediaStatus = otherCallInfo.getMediaStatus();
+                            if(otherCallInfo.isActive() && otherMediaStatus !=  SipCallSession.MediaState.NONE) {
+                                boolean connect = connectToOtherCalls && (otherMediaStatus == SipCallSession.MediaState.ACTIVE ||
+                                                                                                                    otherMediaStatus == SipCallSession.MediaState.REMOTE_HOLD);
+                                int otherCallConfSlot = otherCallInfo.getConfPort();
+                                if(connect) {
+                                    pjsua.conf_connect(callConfSlot, otherCallConfSlot);
+                                    pjsua.conf_connect(otherCallConfSlot, callConfSlot);
+                                }else {
+                                    pjsua.conf_disconnect(callConfSlot, otherCallConfSlot);
+                                    pjsua.conf_disconnect(otherCallConfSlot, callConfSlot);
+                                }
+                            }
+                            
+                        }
+                    }
+                }
             }
 
             msgHandler.sendMessage(msgHandler.obtainMessage(ON_MEDIA_STATE, callInfo));
@@ -478,6 +526,20 @@ public class UAStateReceiver extends Callback {
         unlockCpu();
     }
 
+    /* (non-Javadoc)
+     * @see org.pjsip.pjsua.Callback#on_call_transfer_status(int, int, org.pjsip.pjsua.pj_str_t, int, org.pjsip.pjsua.SWIGTYPE_p_int)
+     */
+    @Override
+    public void on_call_transfer_status(int callId, int st_code, pj_str_t st_text, int final_,
+            SWIGTYPE_p_int p_cont) {
+        lockCpu();
+        if((st_code / 100) == 2) {
+            pjsua.call_hangup(callId, 0, null, null);
+        }
+        unlockCpu();
+    }
+    
+    
     // public String sasString = "";
     // public boolean zrtpOn = false;
 
@@ -511,9 +573,10 @@ public class UAStateReceiver extends Callback {
 
     @Override
     public void on_nat_detect(pj_stun_nat_detect_result res) {
-        // TODO : IMPLEMENT THIS FEATURE
-        Log.d(THIS_FILE,
-                "NAT TYPE DETECTED !!!" + res.getNat_type_name() + " et " + res.getStatus());
+        Log.d(THIS_FILE, "NAT TYPE DETECTED !!!" + res.getNat_type_name());
+        if (pjService != null) {
+            pjService.setDetectedNatType(res.getNat_type_name(), res.getStatus());
+        }
     }
 
     @Override
@@ -711,7 +774,7 @@ public class UAStateReceiver extends Callback {
                             }
 
                             // If the call goes out in error...
-                            if (callInfo.getLastStatusCode() != 200) {
+                            if (callInfo.getLastStatusCode() != 200 && callInfo.getLastReasonCode() != 200) {
                                 // We notify the user with toaster
                                 stateReceiver.pjService.service.notifyUserOfMessage(callInfo
                                         .getLastStatusCode()
@@ -855,9 +918,9 @@ public class UAStateReceiver extends Callback {
      * @param callInfo the new call state infos
      */
     private void onBroadcastCallState(final SipCallSession callInfo) {
-        // Internal event
+        SipCallSession publicCallInfo = new SipCallSession(callInfo);
         Intent callStateChangedIntent = new Intent(SipManager.ACTION_SIP_CALL_CHANGED);
-        callStateChangedIntent.putExtra(SipManager.EXTRA_CALL_INFO, callInfo);
+        callStateChangedIntent.putExtra(SipManager.EXTRA_CALL_INFO, publicCallInfo);
         pjService.service.sendBroadcast(callStateChangedIntent, SipManager.PERMISSION_USE_SIP);
 
     }
@@ -872,13 +935,16 @@ public class UAStateReceiver extends Callback {
      */
     private void broadCastAndroidCallState(String state, String number) {
         // Android normalized event
-        Intent intent = new Intent(ACTION_PHONE_STATE_CHANGED);
-        intent.putExtra(TelephonyManager.EXTRA_STATE, state);
-        if (number != null) {
-            intent.putExtra(TelephonyManager.EXTRA_INCOMING_NUMBER, number);
+        if(!Compatibility.isCompatible(19)) {
+            // Not allowed to do that from kitkat
+            Intent intent = new Intent(ACTION_PHONE_STATE_CHANGED);
+            intent.putExtra(TelephonyManager.EXTRA_STATE, state);
+            if (number != null) {
+                intent.putExtra(TelephonyManager.EXTRA_INCOMING_NUMBER, number);
+            }
+            intent.putExtra(pjService.service.getString(R.string.app_name), true);
+            pjService.service.sendBroadcast(intent, android.Manifest.permission.READ_PHONE_STATE);
         }
-        intent.putExtra(pjService.service.getString(R.string.app_name), true);
-        pjService.service.sendBroadcast(intent, android.Manifest.permission.READ_PHONE_STATE);
     }
 
     /**
@@ -894,21 +960,18 @@ public class UAStateReceiver extends Callback {
      */
     private synchronized void launchCallHandler(SipCallSession currentCallInfo2) {
         long currentElapsedTime = SystemClock.elapsedRealtime();
-
         // Synchronized ensure we do not get this launched several time
         // We also ensure that a minimum delay has been consumed so that we do
         // not fire this too much times
         // Specially for EARLY - CONNECTING states
         if (lastLaunchCallHandler + LAUNCH_TRIGGER_DELAY < currentElapsedTime) {
+            Context ctxt = pjService.service;
 
             // Launch activity to choose what to do with this call
-            Intent callHandlerIntent = new Intent(SipManager.ACTION_SIP_CALL_UI);
-            callHandlerIntent.putExtra(SipManager.EXTRA_CALL_INFO, currentCallInfo2);
-            callHandlerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            Intent callHandlerIntent = SipService.buildCallUiIntent(ctxt, currentCallInfo2);
 
             Log.d(THIS_FILE, "Anounce call activity");
-            pjService.service.startActivity(callHandlerIntent);
+            ctxt.startActivity(callHandlerIntent);
             lastLaunchCallHandler = currentElapsedTime;
         } else {
             Log.d(THIS_FILE, "Ignore extra launch handler");

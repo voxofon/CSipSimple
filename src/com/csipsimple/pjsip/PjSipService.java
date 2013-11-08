@@ -36,6 +36,7 @@ import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.SurfaceView;
 
 import com.csipsimple.R;
 import com.csipsimple.api.SipCallSession;
@@ -46,6 +47,7 @@ import com.csipsimple.api.SipProfile;
 import com.csipsimple.api.SipProfileState;
 import com.csipsimple.api.SipUri;
 import com.csipsimple.api.SipUri.ParsedSipContactInfos;
+import com.csipsimple.pjsip.earlylock.EarlyLockModule;
 import com.csipsimple.pjsip.player.IPlayerHandler;
 import com.csipsimple.pjsip.player.impl.SimpleWavPlayerHandler;
 import com.csipsimple.pjsip.recorder.IRecorderHandler;
@@ -129,6 +131,7 @@ public class PjSipService {
     private SparseArray<String> dtmfToAutoSend = new SparseArray<String>(5);
     private SparseArray<TimerTask> dtmfTasks = new SparseArray<TimerTask>(5);
     private SparseArray<PjStreamDialtoneGenerator> dtmfDialtoneGenerators = new SparseArray<PjStreamDialtoneGenerator>(5);
+    private String mNatDetected = "";
 
     // -------
     // Locks
@@ -668,7 +671,7 @@ public class PjSipService {
         // long flags = 1; /*< Lazy disconnect : only RX */
         // Try with TX & RX if network is considered as available
         long flags = 0;
-        if (!prefsWrapper.isValidConnectionForOutgoing()) {
+        if (!prefsWrapper.isValidConnectionForOutgoing(false)) {
             // If we are current not valid for outgoing,
             // it means that we don't want the network for SIP now
             // so don't use RX | TX to not consume data at all
@@ -1521,6 +1524,14 @@ public class PjSipService {
         }
         return null;
     }
+    
+    public SipCallSession getPublicCallInfo(int callId) {
+        SipCallSession internalCallSession = getCallInfo(callId);
+        if( internalCallSession == null) {
+            return null;
+        }
+        return new SipCallSession(internalCallSession);
+    }
 
     public void setBluetoothOn(boolean on) throws SameThreadException {
         if (created && mediaManager != null) {
@@ -1847,8 +1858,8 @@ public class PjSipService {
             finalCallee.domain = defaultDomain;
         }
         if (TextUtils.isEmpty(finalCallee.scheme)) {
-            if (account.transport == SipProfile.TRANSPORT_TLS) {
-                finalCallee.scheme = SipManager.PROTOCOL_SIPS;
+            if (!TextUtils.isEmpty(account.default_uri_scheme)) {
+                finalCallee.scheme = account.default_uri_scheme;
             } else {
                 finalCallee.scheme = SipManager.PROTOCOL_SIP;
             }
@@ -1948,6 +1959,18 @@ public class PjSipService {
             return;
         }
         pjsua.jzrtp_SASRevoked(callId);
+    }
+    
+    protected void setDetectedNatType(String natName, int status) {
+        // Maybe we will need to treat status to eliminate some set (depending of unknown string fine for 3rd part dev) 
+        mNatDetected = natName;
+    }
+
+    /**
+     * @return nat type name detected by pjsip. Empty string if nothing detected
+     */
+    public String getDetectedNatType() {
+        return mNatDetected;
     }
 
     // Config subwrapper
@@ -2092,7 +2115,7 @@ public class PjSipService {
             for (IRecorderHandler recoder : recoders) {
                 recoder.stopRecording();
                 // Broadcast to other apps the a new sip record has been done
-                SipCallSession callInfo = getCallInfo(callId);
+                SipCallSession callInfo = getPublicCallInfo(callId);
                 Intent it = new Intent(SipManager.ACTION_SIP_CALL_RECORDED);
                 it.putExtra(SipManager.EXTRA_CALL_INFO, callInfo);
                 recoder.fillBroadcastWithInfo(it);
@@ -2241,6 +2264,11 @@ public class PjSipService {
         return "";
     }
 
+    /**
+     * Get the signal level
+     * @param port The pjsip port to get signal from
+     * @return an encoded long with rx level on higher byte and tx level on lower byte
+     */
     public long getRxTxLevel(int port) {
         long[] rx_level = new long[1];
         long[] tx_level = new long[1];
@@ -2248,6 +2276,23 @@ public class PjSipService {
         return (rx_level[0] << 8 | tx_level[0]);
     }
 
+    /**
+     * Connect mic source to speaker output.
+     * Usefull for tests.
+     */
+    public void startLoopbackTest() {
+        pjsua.conf_connect(0, 0);
+    }
+    
+    /**
+     * Stop connection between mic source to speaker output.
+     * @see startLoopbackTest
+     */
+    public void stopLoopbackTest() {
+        pjsua.conf_disconnect(0, 0);
+    }
+    
+    
     private Map<String, PjsipModule> pjsipModules = new HashMap<String, PjsipModule>();
 
     private void initModules() {
@@ -2257,6 +2302,9 @@ public class PjSipService {
 
         rModule = new SipClfModule();
         pjsipModules.put(SipClfModule.class.getCanonicalName(), rModule);
+        
+        rModule = new EarlyLockModule();
+        pjsipModules.put(EarlyLockModule.class.getCanonicalName(), rModule);
 
         for (PjsipModule mod : pjsipModules.values()) {
             mod.setContext(service);
@@ -2286,5 +2334,24 @@ public class PjSipService {
          */
         void onBeforeAccountStartRegistration(int pjId, SipProfile acc);
     }
+
+    /**
+     * Provide video render surface to native code.  
+     * @param callId The call id for this video surface
+     * @param window The video surface object
+     */
+    public void setVideoAndroidRenderer(int callId, SurfaceView window) {
+        pjsua.vid_set_android_renderer(callId, (Object) window);
+    }
+
+    /**
+     * Provide video capturer surface view (the one binded to camera).
+     * @param window The surface view object
+     */
+    public void setVideoAndroidCapturer(SurfaceView window) {
+        pjsua.vid_set_android_capturer((Object) window);
+    }
+
+
 
 }

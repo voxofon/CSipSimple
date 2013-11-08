@@ -43,6 +43,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.RemoteException;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.util.SparseArray;
 import android.view.KeyEvent;
@@ -57,6 +58,7 @@ import com.csipsimple.R;
 import com.csipsimple.api.ISipService;
 import com.csipsimple.api.MediaState;
 import com.csipsimple.api.SipCallSession;
+import com.csipsimple.api.SipCallSession.StatusCode;
 import com.csipsimple.api.SipConfigManager;
 import com.csipsimple.api.SipManager;
 import com.csipsimple.api.SipProfile;
@@ -64,14 +66,15 @@ import com.csipsimple.service.SipService;
 import com.csipsimple.ui.PickupSipUri;
 import com.csipsimple.ui.incall.CallProximityManager.ProximityDirector;
 import com.csipsimple.ui.incall.DtmfDialogFragment.OnDtmfListener;
+import com.csipsimple.ui.incall.locker.IOnLeftRightChoice;
+import com.csipsimple.ui.incall.locker.InCallAnswerControls;
+import com.csipsimple.ui.incall.locker.ScreenLocker;
 import com.csipsimple.utils.CallsUtils;
 import com.csipsimple.utils.DialingFeedback;
 import com.csipsimple.utils.Log;
 import com.csipsimple.utils.PreferencesProviderWrapper;
 import com.csipsimple.utils.Theme;
 import com.csipsimple.utils.keyguard.KeyguardWrapper;
-import com.csipsimple.widgets.IOnLeftRightChoice;
-import com.csipsimple.widgets.ScreenLocker;
 
 import org.webrtc.videoengine.ViERenderer;
 
@@ -878,7 +881,7 @@ public class InCallActivity extends SherlockFragmentActivity implements IOnCallA
                 }
                 case DONT_TAKE_CALL: {
                     if (service != null) {
-                        service.hangup(call.getCallId(), 486);
+                        service.hangup(call.getCallId(), StatusCode.BUSY_HERE);
                     }
                     break;
                 }
@@ -922,11 +925,15 @@ public class InCallActivity extends SherlockFragmentActivity implements IOnCallA
                             infoDialog.dismiss();
                         }
                         String infos = service.showCallInfosDialog(call.getCallId());
-                        
+                        String natType = service.getLocalNatType();
                         SpannableStringBuilder buf = new SpannableStringBuilder();
                         Builder builder = new AlertDialog.Builder(this);
 
                         buf.append(infos);
+                        if(!TextUtils.isEmpty(natType)) {
+                            buf.append("\r\nLocal NAT type detected : ");
+                            buf.append(natType);
+                        }
                         TextAppearanceSpan textSmallSpan = new TextAppearanceSpan(this,
                                 android.R.style.TextAppearance_Small);
                         buf.setSpan(textSmallSpan, 0, buf.length(),
