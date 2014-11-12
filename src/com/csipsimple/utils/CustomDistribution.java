@@ -64,7 +64,7 @@ public final class CustomDistribution {
 	 * @return the default user agent
 	 */
 	public static String getUserAgent() {
-		return "Voxofon 4.0.0 (Android " + Build.VERSION.RELEASE + ' ' + Build.VERSION.SDK_INT + ')';
+		return "Voxofon 5.6.1 (Android " + Build.VERSION.RELEASE + ' ' + Build.VERSION.SDK_INT + ')';
 	}
 	
 	/**
