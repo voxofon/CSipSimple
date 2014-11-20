@@ -26,29 +26,32 @@ import android.media.AudioManager;
 import com.csipsimple.service.SipService;
 import com.csipsimple.utils.Compatibility;
 
-
 public abstract class AudioFocusWrapper {
-private static AudioFocusWrapper instance;
-	
-	public static AudioFocusWrapper getInstance() {
-		if(instance == null) {
-			if(Compatibility.isCompatible(8)) {
-			    instance = new com.csipsimple.utils.audio.AudioFocus8();
-			}else {
-			    instance = new com.csipsimple.utils.audio.AudioFocus3();
-			}
-		}
-		
-		return instance;
-	}
-	
-	protected AudioFocusWrapper() {}
-	
-	
-	public abstract void init(SipService service, AudioManager manager);
-	public abstract void focus(boolean userWantsBluetooth);
-	public abstract void unFocus();
-	
-	
-	
+    private static AudioFocusWrapper instance;
+
+    public static AudioFocusWrapper getInstance() {
+        if (instance == null) {
+            if (Compatibility.isCompatible(17)) {
+                instance = new com.csipsimple.utils.audio.AudioFocus17();
+            } else if (Compatibility.isCompatible(8)) {
+                instance = new com.csipsimple.utils.audio.AudioFocus8();
+            } else {
+                instance = new com.csipsimple.utils.audio.AudioFocus3();
+            }
+        }
+
+        return instance;
+    }
+
+    protected AudioFocusWrapper() {
+    }
+
+    public abstract void init(SipService service, AudioManager manager);
+
+    public abstract void focus(boolean userWantsBluetooth);
+
+    public abstract void unFocus();
+
+    public abstract String getProperty(String property);
+
 }

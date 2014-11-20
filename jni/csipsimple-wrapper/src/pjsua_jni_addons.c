@@ -136,14 +136,11 @@ PJ_DECL(pj_str_t) call_secure_media_info(pjsua_call_id call_id) {
 							zrtp_state_info info = jzrtp_getInfoFromTransport(call_med->tp);
 							if(info.secure){
 								char msg[512];
-								PJ_LOG(4, (THIS_FILE, "ZRTP :: V %d", info.sas_verified));
-								PJ_LOG(4, (THIS_FILE, "ZRTP :: S L %d", info.sas.slen));
-								PJ_LOG(4, (THIS_FILE, "ZRTP :: C L %d", info.cipher.slen));
 
 								pj_ansi_snprintf(msg, sizeof(msg), "ZRTP - %s\n%.*s\n%.*s",
 										info.sas_verified ? "Verified": "Not verified",
-										info.sas.slen, info.sas.ptr,
-										info.cipher.slen, info.cipher.ptr);
+										(int)info.sas.slen, info.sas.ptr,
+										(int)info.cipher.slen, info.cipher.ptr);
 
 								pj_strdup2_with_null(css_var.pool, &result, msg);
 								break;
@@ -387,9 +384,9 @@ PJ_DECL(void*) get_library_factory(dynamic_factory *impl) {
 	char init_name[512];
 	FILE* file;
 	pj_ansi_snprintf(lib_path, sizeof(lib_path), "%.*s",
-			impl->shared_lib_path.slen, impl->shared_lib_path.ptr);
+			(int)impl->shared_lib_path.slen, impl->shared_lib_path.ptr);
 	pj_ansi_snprintf(init_name, sizeof(init_name), "%.*s",
-			impl->init_factory_name.slen, impl->init_factory_name.ptr);
+			(int)impl->init_factory_name.slen, impl->init_factory_name.ptr);
 
 	void* handle = dlopen(lib_path, RTLD_LAZY);
 	if (handle != NULL) {
@@ -502,7 +499,7 @@ PJ_DECL(pj_status_t) csipsimple_init(pjsua_config *ua_cfg,
 
 #if defined(PJMEDIA_HAS_ZRTP) && PJMEDIA_HAS_ZRTP!=0
 	pj_ansi_snprintf(css_var.zid_file, sizeof(css_var.zid_file),
-			"%.*s/simple.zid", css_cfg->storage_folder.slen,
+			"%.*s/simple.zid", (int)css_cfg->storage_folder.slen,
 			css_cfg->storage_folder.ptr);
 #endif
 
@@ -622,12 +619,13 @@ PJ_DECL(void) csipsimple_acc_config_default(csipsimple_acc_config* css_acc_cfg){
 	css_acc_cfg->p_preferred_identity.slen = 0;
 }
 
-PJ_DECL(pj_status_t) csipsimple_set_acc_user_data(pjsua_acc_config* acc_cfg, csipsimple_acc_config* css_acc_cfg){
+PJ_DECL(pj_status_t) csipsimple_set_acc_user_data(pjsua_acc_id acc_id, csipsimple_acc_config* css_acc_cfg){
 
 	csipsimple_acc_config *additional_acc_cfg = PJ_POOL_ZALLOC_T(css_var.pool, csipsimple_acc_config);
 	pj_memcpy(additional_acc_cfg, css_acc_cfg, sizeof(csipsimple_acc_config));
 	pj_strdup(css_var.pool, &additional_acc_cfg->p_preferred_identity, &css_acc_cfg->p_preferred_identity);
-	acc_cfg->user_data = additional_acc_cfg;
+
+	pjsua_acc_set_user_data(acc_id, additional_acc_cfg);
 
 	return PJ_SUCCESS;
 }

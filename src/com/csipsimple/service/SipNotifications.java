@@ -365,7 +365,7 @@ public class SipNotifications {
 		// CharSequence tickerText = context.getText(R.string.instance_message);
 		if (!msg.getFrom().equalsIgnoreCase(viewingRemoteFrom)) {
 			String from = formatRemoteContactString(msg.getFullFrom());
-			if(from.equalsIgnoreCase(msg.getFullFrom())) {
+			if(from.equalsIgnoreCase(msg.getFullFrom()) && !from.equals(msg.getDisplayName())) {
 			    from = msg.getDisplayName() + " " + from;
 			}
 			CharSequence tickerText = buildTickerMessage(context, from, msg.getBody());
@@ -422,10 +422,15 @@ public class SipNotifications {
 
         String messageText = "";
         if (acc != null) {
-            messageText += acc.getProfileName() + " : ";
+            messageText += acc.getProfileName();
+            if(numberOfMessages>0) {
+                messageText += " : ";
+            }
         }
-        messageText += Integer.toString(numberOfMessages);
-
+        if(numberOfMessages > 0) {
+            messageText += Integer.toString(numberOfMessages);
+        }
+        
         messageVoicemail.setContentTitle(context.getString(R.string.voice_mail));
         messageVoicemail.setContentText(messageText);
         if (contentIntent != null) {

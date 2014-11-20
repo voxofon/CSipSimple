@@ -93,6 +93,7 @@ public class UAStateReceiver extends Callback {
 
     private int eventLockCount = 0;
     private boolean mIntegrateWithCallLogs;
+    private boolean mPlayWaittone;
     private int mPreferedHeadsetAction;
     private boolean mAutoRecordCalls;
     private int mMicroSource;
@@ -211,8 +212,10 @@ public class UAStateReceiver extends Callback {
             // If disconnected immediate stop required stuffs
             if (callState == SipCallSession.InvState.DISCONNECTED) {
                 if (pjService.mediaManager != null) {
-                    pjService.mediaManager.stopRingAndUnfocus();
-                    pjService.mediaManager.resetSettings();
+                    if(getRingingCall() == null) {
+                        pjService.mediaManager.stopRingAndUnfocus();
+                        pjService.mediaManager.resetSettings();
+                    }
                 }
                 if (ongoingCallLock != null && ongoingCallLock.isHeld()) {
                     ongoingCallLock.release();
@@ -221,6 +224,7 @@ public class UAStateReceiver extends Callback {
                 pjService.stopDialtoneGenerator(callId);
                 pjService.stopRecording(callId);
                 pjService.stopPlaying(callId);
+                pjService.stopWaittoneGenerator(callId);
             } else {
                 if (ongoingCallLock != null && !ongoingCallLock.isHeld()) {
                     ongoingCallLock.acquire();
@@ -298,8 +302,8 @@ public class UAStateReceiver extends Callback {
                 break;
         }
 
-        pjService.service.presenceMgr.changeBuddyState(PjSipService.pjStrToString(binfo.getUri()),
-                binfo.getMonitor_pres(), presStatus, presStatusTxt);
+//        pjService.service.presenceMgr.changeBuddyState(PjSipService.pjStrToString(binfo.getUri()),
+//                binfo.getMonitor_pres(), presStatus, presStatusTxt);
         unlockCpu();
     }
 
@@ -316,6 +320,12 @@ public class UAStateReceiver extends Callback {
         String bodyStr = PjSipService.pjStrToString(body);
         String mimeStr = PjSipService.pjStrToString(mime_type);
 
+        // Sanitize from sip uri
+        int slashIndex = fromStr.indexOf("/");
+        if (slashIndex != -1){
+            fromStr = fromStr.substring(0, slashIndex);
+        }
+        
         SipMessage msg = new SipMessage(canonicFromStr, toStr, contactStr, bodyStr, mimeStr,
                 date, SipMessage.MESSAGE_TYPE_INBOX, fromStr);
 
@@ -406,8 +416,9 @@ public class UAStateReceiver extends Callback {
              */
             boolean connectToOtherCalls = false;
             int callConfSlot = callInfo.getConfPort();
-            if (callInfo.getMediaStatus() == SipCallSession.MediaState.ACTIVE ||
-                    callInfo.getMediaStatus() == SipCallSession.MediaState.REMOTE_HOLD) {
+            int mediaStatus = callInfo.getMediaStatus();
+            if (mediaStatus == SipCallSession.MediaState.ACTIVE ||
+                    mediaStatus == SipCallSession.MediaState.REMOTE_HOLD) {
                 
                 connectToOtherCalls = true;
                 pjsua.conf_connect(callConfSlot, 0);
@@ -428,6 +439,7 @@ public class UAStateReceiver extends Callback {
             
 
             // Connects/disconnnect to other active calls (for conferencing).
+            boolean hasOtherCall = false;
             synchronized (callsList) {
                 if (callsList != null) {
                     for (int i = 0; i < callsList.size(); i++) {
@@ -435,6 +447,7 @@ public class UAStateReceiver extends Callback {
                         if (otherCallInfo != null && otherCallInfo != callInfo) {
                             int otherMediaStatus = otherCallInfo.getMediaStatus();
                             if(otherCallInfo.isActive() && otherMediaStatus !=  SipCallSession.MediaState.NONE) {
+                                hasOtherCall = true;
                                 boolean connect = connectToOtherCalls && (otherMediaStatus == SipCallSession.MediaState.ACTIVE ||
                                                                                                                     otherMediaStatus == SipCallSession.MediaState.REMOTE_HOLD);
                                 int otherCallConfSlot = otherCallInfo.getConfPort();
@@ -446,9 +459,17 @@ public class UAStateReceiver extends Callback {
                                     pjsua.conf_disconnect(otherCallConfSlot, callConfSlot);
                                 }
                             }
-                            
                         }
                     }
+                }
+            }
+
+            // Play wait tone
+            if(mPlayWaittone) {
+                if(mediaStatus == SipCallSession.MediaState.REMOTE_HOLD && !hasOtherCall) {
+                    pjService.startWaittoneGenerator(callId);
+                }else {
+                    pjService.stopWaittoneGenerator(callId);
                 }
             }
 
@@ -470,6 +491,7 @@ public class UAStateReceiver extends Callback {
         // mime_type.getPtr() + " | " + body.getPtr());
 
         boolean hasMessage = false;
+        boolean hasSomeNumberOfMessage = false;
         int numberOfMessages = 0;
         // String accountNbr = "";
 
@@ -484,6 +506,8 @@ public class UAStateReceiver extends Callback {
         // Pattern.CASE_INSENSITIVE);
         Pattern messVoiceNbrPattern = Pattern.compile(
                 ".*Voice-Message[ \t]?:[ \t]?([0-9]*)/[0-9]*.*", Pattern.CASE_INSENSITIVE);
+        Pattern messFaxNbrPattern = Pattern.compile(
+                ".*Fax-Message[ \t]?:[ \t]?([0-9]*)/[0-9]*.*", Pattern.CASE_INSENSITIVE);
 
         for (String line : lines) {
             Matcher m;
@@ -506,15 +530,19 @@ public class UAStateReceiver extends Callback {
             if (m.matches()) {
                 try {
                     numberOfMessages = Integer.parseInt(m.group(1));
+                    hasSomeNumberOfMessage = true;
                 } catch (NumberFormatException e) {
                     Log.w(THIS_FILE, "Not well formated number " + m.group(1));
                 }
                 Log.d(THIS_FILE, "Nbr : " + numberOfMessages);
                 continue;
             }
+            if(messFaxNbrPattern.matcher(line).matches()) {
+                hasSomeNumberOfMessage = true;
+            }
         }
 
-        if (hasMessage && numberOfMessages > 0) {
+        if (hasMessage && (numberOfMessages > 0 || !hasSomeNumberOfMessage)) {
             SipProfile acc = pjService.getAccountForPjsipId(acc_id);
             if (acc != null) {
                 Log.d(THIS_FILE, acc_id + " -> Has found account " + acc.getDefaultDomain() + " "
@@ -659,10 +687,12 @@ public class UAStateReceiver extends Callback {
         if (callsList != null) {
             List<SipCallSessionImpl> calls = new ArrayList<SipCallSessionImpl>();
 
-            for (int i = 0; i < callsList.size(); i++) {
-                SipCallSessionImpl callInfo = getCallInfo(i);
-                if (callInfo != null) {
-                    calls.add(callInfo);
+            synchronized (callsList) {
+                for (int i = 0; i < callsList.size(); i++) {
+                    SipCallSessionImpl callInfo = getCallInfo(i);
+                    if (callInfo != null) {
+                        calls.add(callInfo);
+                    }
                 }
             }
             return calls.toArray(new SipCallSessionImpl[calls.size()]);
@@ -741,11 +771,10 @@ public class UAStateReceiver extends Callback {
                             }
                             break;
                         case SipCallSession.InvState.DISCONNECTED:
-                            if (stateReceiver.pjService.mediaManager != null) {
+                            if (stateReceiver.pjService.mediaManager != null && stateReceiver.getRingingCall() == null) {
                                 stateReceiver.pjService.mediaManager.stopRing();
                             }
 
-                            Log.d(THIS_FILE, "Finish call2");
                             stateReceiver.broadCastAndroidCallState("IDLE",
                                     callInfo.getRemoteContact());
 
@@ -903,6 +932,8 @@ public class UAStateReceiver extends Callback {
                 SipConfigManager.AUTO_RECORD_CALLS);
         mMicroSource = SipConfigManager.getPreferenceIntegerValue(ctxt,
                 SipConfigManager.MICRO_SOURCE);
+        mPlayWaittone = SipConfigManager.getPreferenceBooleanValue(ctxt, 
+                SipConfigManager.PLAY_WAITTONE_ON_HOLD, false);
     }
 
     // --------
@@ -985,10 +1016,12 @@ public class UAStateReceiver extends Callback {
      */
     public SipCallSession getActiveCallInProgress() {
         // Go through the whole list of calls and find the first active state.
-        for (int i = 0; i < callsList.size(); i++) {
-            SipCallSession callInfo = getCallInfo(i);
-            if (callInfo != null && callInfo.isActive()) {
-                return callInfo;
+        synchronized (callsList) {
+            for (int i = 0; i < callsList.size(); i++) {
+                SipCallSession callInfo = getCallInfo(i);
+                if (callInfo != null && callInfo.isActive()) {
+                    return callInfo;
+                }
             }
         }
         return null;
@@ -1001,13 +1034,29 @@ public class UAStateReceiver extends Callback {
      */
     public SipCallSession getActiveCallOngoing() {
         // Go through the whole list of calls and find the first active state.
-        for (int i = 0; i < callsList.size(); i++) {
-            SipCallSession callInfo = getCallInfo(i);
-            if (callInfo != null && callInfo.isActive() && callInfo.isOngoing()) {
-                return callInfo;
+        synchronized (callsList) {
+            for (int i = 0; i < callsList.size(); i++) {
+                SipCallSession callInfo = getCallInfo(i);
+                if (callInfo != null && callInfo.isActive() && callInfo.isOngoing()) {
+                    return callInfo;
+                }
             }
         }
         return null;
+    }
+    
+    public SipCallSession getRingingCall() {
+        // Go through the whole list of calls and find the first ringing state.
+        synchronized (callsList) {
+            for (int i = 0; i < callsList.size(); i++) {
+                SipCallSession callInfo = getCallInfo(i);
+                if (callInfo != null && callInfo.isActive() && callInfo.isBeforeConfirmed() && callInfo.isIncoming()) {
+                    return callInfo;
+                }
+            }
+        }
+        return null;
+        
     }
 
     /**

@@ -409,6 +409,22 @@ public class WizardUtils {
                     R.drawable.ic_wizard_advancefone, 30, 
                     new Locale[]{ }, false, true, 
                     Advancefone.class));
+            WIZARDS_DICT.put("KURIRA", new WizardInfo("KURIRA", "Kurira", 
+                    R.drawable.ic_wizard_kurira, 30, 
+                    new Locale[]{ }, false, true, 
+                    Kurira.class));
+            WIZARDS_DICT.put("VOSTRON", new WizardInfo("VOSTRON", "Vostron", 
+                    R.drawable.ic_wizard_vostron, 30, 
+                    new Locale[]{ }, false, true, 
+                    Vostron.class));
+            WIZARDS_DICT.put("SIPALO", new WizardInfo("SIPALO", "Sipalo", 
+                    R.drawable.ic_wizard_sipalo, 30, 
+                    new Locale[]{ }, false, true, 
+                    Sipalo.class));
+            WIZARDS_DICT.put("ALONIA", new WizardInfo("ALONIA", "Alonia", 
+                    R.drawable.ic_wizard_alonia, 30, 
+                    new Locale[]{ }, false, true, 
+                    Alonia.class));
             
 			
 			//Locales
@@ -453,10 +469,14 @@ public class WizardUtils {
 					R.drawable.ic_wizard_planetphone, 10, 
 					new Locale[]{ locale("bg_BG") }, false, false, 
 					PlanetPhone.class));
-			WIZARDS_DICT.put("SIPGATE", new WizardInfo("SIPGATE", "Sipgate", 
+			WIZARDS_DICT.put("SIPGATE", new WizardInfo("SIPGATE", "Sipgate DE", 
 					R.drawable.ic_wizard_sipgate, 10, 
-					new Locale[]{Locale.US, Locale.UK, Locale.GERMANY}, false, false, 
+					new Locale[]{Locale.GERMANY}, false, false, 
 					Sipgate.class));
+            WIZARDS_DICT.put("SIPGATEUK", new WizardInfo("SIPGATEUK", "Sipgate UK", 
+                    R.drawable.ic_wizard_sipgate_uk, 10, 
+                    new Locale[]{}, false, true, 
+                    SipgateUK.class));
 			WIZARDS_DICT.put("PENNYTEL", new WizardInfo("PENNYTEL", "Pennytel", 
 					R.drawable.ic_wizard_pennytel, 10, 
 					new Locale[]{ locale("en_AU") }, false, false, 
@@ -738,7 +758,7 @@ public class WizardUtils {
                     R.drawable.ic_wizard_voipbel, 19, 
                     new Locale[]{ locale("nl_BE"), locale("nl_NL"), locale("fr_BE") }, false, false, 
                     VoipBel.class));
-            WIZARDS_DICT.put("GLOBTELECOM", new WizardInfo("GLOBTELECOM", "Globtelecom", 
+            WIZARDS_DICT.put("GLOBTELECOM", new WizardInfo("GLOBTELECOM", "GVoip", 
                     R.drawable.ic_wizard_globtelecom, 10, 
                     new Locale[]{locale("ru_RU"),}, false, false, 
                     Globtelecom.class));
@@ -1064,11 +1084,60 @@ public class WizardUtils {
                     Hibritel.class));
             WIZARDS_DICT.put("POLFON", new WizardInfo("POLFON", "polfon", 
                     R.drawable.ic_wizard_polfon, 19, 
+                    new Locale[]{ new Locale("pl") }, false, false, 
+                    Polfon.class));
+            WIZARDS_DICT.put("TELPHIN", new WizardInfo("TELPHIN", "Telphin", 
+                    R.drawable.ic_wizard_telphin, 45, 
+                    new Locale[]{ locale("ru_RU") }, false, false, 
+                    Telphin.class));
+            WIZARDS_DICT.put("NETGSM", new WizardInfo("NETGSM", "Netgsm", 
+                    R.drawable.ic_wizard_netgsm, 30, 
+                    new Locale[] {new Locale("TR", "tr")}, false, false, 
+                    NetGSM.class));
+            WIZARDS_DICT.put("NETGSMSANTRAL", new WizardInfo("NETGSMSANTRAL", "Netgsm Sanal Santral", 
+                    R.drawable.ic_wizard_netgsmsantral, 30,
+                    new Locale[] {new Locale("TR", "tr")}, false, false, 
+                    NetGSMSantral.class));
+            WIZARDS_DICT.put("GTEL", new WizardInfo("GTEL", "GTel", 
+                    R.drawable.ic_wizard_gtel, 30,
+                    new Locale[] {new Locale("AR", "tn"), new Locale("FR", "tn")}, false, false, 
+                    GTel.class));
+            WIZARDS_DICT.put("MANGOTELECOM", new WizardInfo("MANGOTELECOM", "Mango Telecom", 
+                    R.drawable.ic_wizard_mangotelecom, 10, 
+                    new Locale[]{
+                    locale("ru_RU")
+                    }, false, false, 
+                    MangoTelecom.class));
+            WIZARDS_DICT.put("NEOFONTPPL", new WizardInfo("NEOFONTPPL", "Neofon.tp.pl", 
+                    R.drawable.ic_wizard_neofontppl, 10, 
                     new Locale[]{
                     new Locale("pl")
                     }, false, false, 
-                    Polfon.class));
-            
+                    NeofonTpPl.class));
+            WIZARDS_DICT.put("YESCALL", new WizardInfo("YESCALL", "YesCall", 
+                    R.drawable.ic_wizard_yescall, 9, 
+                    new Locale[]{ locale("zh_CN"), locale("zh_TW")}, false, false, 
+                    YesCall.class));
+            WIZARDS_DICT.put("FERAREDIALER", new WizardInfo("FERAREDIALER", "Ferare Dialer", 
+                    R.drawable.ic_wizard_ferare, 10, 
+                    new Locale[] {new Locale("sr")}, false, false, 
+                    FerareDialer.class));
+            WIZARDS_DICT.put("CARDTEL", new WizardInfo("CARDTEL", "CardTel", 
+                    R.drawable.ic_wizard_cardtel, 10, 
+                    new Locale[] {new Locale("RU"), new Locale("BG"), new Locale("UA"), new Locale("RF"), new Locale("KZ"), new Locale("BY"), new Locale("MK"),  new Locale("UK")}, false, false, 
+                    CardTel.class));
+            WIZARDS_DICT.put("TELOPAR", new WizardInfo("TELOPAR", "Novatrope", 
+                    R.drawable.ic_wizard_telopar, 10, 
+                    new Locale[] {Locale.US}, false, false, 
+                    Telopar.class));
+            WIZARDS_DICT.put("SKYIPTELECOM", new WizardInfo("SKYIPTELECOM", "SKYiptelecom", 
+                    R.drawable.ic_wizard_skyiptelecom, 10, 
+                    new Locale[] {new Locale("RU"), new Locale("BG"), new Locale("UA"), new Locale("RF"), new Locale("KZ"), new Locale("BY"), new Locale("MK"),  new Locale("UK")}, false, false, 
+                    SKYiptelecom.class));
+            WIZARDS_DICT.put("HAPPYCALL", new WizardInfo("HAPPYCALL", "HappyCall", 
+                    R.drawable.ic_wizard_happycall, 19, 
+                    new Locale[]{ new Locale("pl") }, false, false, 
+                    HappyCall.class));
             
 		}else {
 			WizardInfo info = CustomDistribution.getCustomDistributionWizard();

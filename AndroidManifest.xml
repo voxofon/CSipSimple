@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.csipsimple"
     android:installLocation="auto"
-    android:versionCode="2269"
-    android:versionName="1.01.00" >
+    android:versionCode="2417"
+    android:versionName="1.02.01" >
 
     <supports-screens
         android:anyDensity="true"
@@ -38,6 +38,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
     <uses-permission android:name="android.permission.USE_SIP" />
     <uses-permission android:name="android.permission.CONFIGURE_SIP" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -176,6 +177,7 @@
             android:theme="@style/DarkTheme"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SENDTO" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -184,6 +186,16 @@
                 <data android:scheme="csip" />
                 <data android:scheme="sip" />
                 <data android:scheme="sips" />
+                <data android:scheme="sms" />
+                <data android:scheme="smsto" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SENDTO" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="csip"
                     android:scheme="imto" />
@@ -193,16 +205,6 @@
                 <data
                     android:host="skype"
                     android:scheme="imto" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="csip" />
-                <data android:scheme="sip" />
-                <data android:scheme="sips" />
             </intent-filter>
         </activity-alias>
 
@@ -422,7 +424,9 @@
                 <action android:name="android.intent.action.SENDTO" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
+                <data android:scheme="sms" />
                 <data android:scheme="smsto" />
             </intent-filter>
         </activity-alias>
@@ -544,7 +548,20 @@
 
         <!-- Extra codecs -->
 
+        <receiver
+            android:name="com.csipsimple.plugins.codecs.ReceiverSILK"
+            android:exported="false" >
+            <meta-data
+                android:name="lib_name"
+                android:value="libpj_silk_codec.so" />
+            <meta-data
+                android:name="init_factory"
+                android:value="pjmedia_codec_silk_init" />
 
+            <intent-filter>
+                <action android:name="com.csipsimple.codecs.action.REGISTER_CODEC" />
+            </intent-filter>
+        </receiver>
         <!-- OPUS? -->
 
 

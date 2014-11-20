@@ -21,6 +21,7 @@
 
 package com.csipsimple.service;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -258,14 +259,46 @@ public class SipService extends Service {
                     return;
                 }
             }
-            getExecutor().execute(new SipRunnable() {
-                @Override
-                protected void doRun() throws SameThreadException {
-                    pjService.makeCall(callee, accountId, options);
-                }
-            });
+            
+            Intent intent = new Intent(SipManager.ACTION_SIP_CALL_LAUNCH);
+            intent.putExtra(SipProfile.FIELD_ID, accountId);
+            intent.putExtra(SipManager.EXTRA_SIP_CALL_TARGET, callee);
+            intent.putExtra(SipManager.EXTRA_SIP_CALL_OPTIONS, options);
+            sendOrderedBroadcast (intent , SipManager.PERMISSION_USE_SIP, mPlaceCallResultReceiver, null,  Activity.RESULT_OK, null, null);
+            
         }
 		
+        private BroadcastReceiver mPlaceCallResultReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, final Intent intent) {
+                final Bundle extras =  intent.getExtras();
+                final String action = intent.getAction();
+                if(extras == null) {
+                    Log.e(THIS_FILE, "No data in intent retrieved for call");
+                    return;
+                }
+                if(!SipManager.ACTION_SIP_CALL_LAUNCH.equals(action)) {
+                    Log.e(THIS_FILE, "Received invalid action " + action);
+                    return;
+                }
+
+                final int accountId = extras.getInt(SipProfile.FIELD_ID, -2);
+                final String callee = extras.getString(SipManager.EXTRA_SIP_CALL_TARGET);
+                final Bundle options = extras.getBundle(SipManager.EXTRA_SIP_CALL_OPTIONS);
+                if(accountId == -2 || callee == null) {
+                    Log.e(THIS_FILE, "Invalid rewrite " + accountId);
+                    return;
+                }
+                
+                getExecutor().execute(new SipRunnable() {
+                    @Override
+                    protected void doRun() throws SameThreadException {
+                        pjService.makeCall(callee, accountId, options);
+                    }
+                });
+            }
+        };
 		
 		/**
 		 * {@inheritDoc}
@@ -914,7 +947,7 @@ public class SipService extends Service {
 	private static HandlerThread executorThread;
 	
 	private AccountStatusContentObserver statusObserver = null;
-    public PresenceManager presenceMgr;
+    //public PresenceManager presenceMgr;
     private BroadcastReceiver serviceReceiver;
 	
 	class AccountStatusContentObserver extends ContentObserver {
@@ -1000,7 +1033,7 @@ public class SipService extends Service {
 		boolean hasSetup = prefsWrapper.getPreferenceBooleanValue(PreferencesProviderWrapper.HAS_ALREADY_SETUP_SERVICE, false);
 		Log.d(THIS_FILE, "Service has been setup ? "+ hasSetup);
 		
-		presenceMgr = new PresenceManager();
+		//presenceMgr = new PresenceManager();
         registerServiceBroadcasts();
 		
 		if(!hasSetup) {
@@ -1083,6 +1116,7 @@ public class SipService extends Service {
 			IntentFilter intentfilter = new IntentFilter();
 			intentfilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 			intentfilter.addAction(SipManager.ACTION_SIP_ACCOUNT_CHANGED);
+            intentfilter.addAction(SipManager.ACTION_SIP_ACCOUNT_DELETED);
 			intentfilter.addAction(SipManager.ACTION_SIP_CAN_BE_STOPPED);
 			intentfilter.addAction(SipManager.ACTION_SIP_REQUEST_RESTART);
 			intentfilter.addAction(DynamicReceiver4.ACTION_VPN_CONNECTIVITY);
@@ -1290,7 +1324,7 @@ public class SipService extends Service {
 		Log.d(THIS_FILE, "Ask pjservice to start itself");
 		
 
-        presenceMgr.startMonitoring(this);
+        //presenceMgr.startMonitoring(this);
 		if(pjService.sipStart()) {
 		    // This should be done after in acquire resource
 		    // But due to http://code.google.com/p/android/issues/detail?id=21635
@@ -1319,9 +1353,9 @@ public class SipService extends Service {
 			*/
 		}
 		if(canStop) {
-		    if(presenceMgr != null) {
-		        presenceMgr.stopMonitoring();
-		    }
+		    //if(presenceMgr != null) {
+		    //    presenceMgr.stopMonitoring();
+		    //}
 		    
 		    // Due to http://code.google.com/p/android/issues/detail?id=21635
             // exclude 14 and upper from auto disabling on stop.

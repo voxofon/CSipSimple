@@ -35,6 +35,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
 import com.csipsimple.api.SipConfigManager;
+import com.csipsimple.service.MediaManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -136,7 +137,14 @@ public class PreferencesProviderWrapper {
         boolean valid_for_3g = getPreferenceBooleanValue("use_3g_" + suffix, false);
         boolean valid_for_edge = getPreferenceBooleanValue("use_edge_" + suffix, false);
         boolean valid_for_gprs = getPreferenceBooleanValue("use_gprs_" + suffix, false);
-
+        boolean valid_for_roaming = getPreferenceBooleanValue("use_roaming_" + suffix, true);
+        
+        if(!valid_for_roaming && ni != null) {
+            if(ni.isRoaming()) {
+                return false;
+            }
+        }
+        
         if ((valid_for_3g || valid_for_edge || valid_for_gprs) &&
                 ni != null) {
             int type = ni.getType();
@@ -286,17 +294,23 @@ public class PreferencesProviderWrapper {
 
     /**
      * Get current clock rate
+     * @param mediaManager 
      * 
      * @return clock rate in Hz
      */
-    public long getClockRate() {
+    public long getClockRate(MediaManager mediaManager) {
         String clockRate = getPreferenceStringValue(SipConfigManager.SND_CLOCK_RATE);
+        long defaultRate = 16000;
         try {
-            return Integer.parseInt(clockRate);
+            long rate = Integer.parseInt(clockRate);
+            if(rate == 0) {
+                return mediaManager.getBestSampleRate(defaultRate);
+            }
+            return rate;
         } catch (NumberFormatException e) {
             Log.e(THIS_FILE, "Clock rate " + clockRate + " not well formated");
         }
-        return 16000;
+        return defaultRate;
     }
 
     public boolean useRoutingApi() {
@@ -519,24 +533,6 @@ public class PreferencesProviderWrapper {
         }
 
         return 4;
-    }
-
-    /**
-     * Get whether ice is enabled
-     * 
-     * @return 1 if enabled (pjstyle)
-     */
-    public int getIceEnabled() {
-        return getPreferenceBooleanValue(SipConfigManager.ENABLE_ICE) ? 1 : 0;
-    }
-
-    /**
-     * Get whether turn is enabled
-     * 
-     * @return 1 if enabled (pjstyle)
-     */
-    public int getTurnEnabled() {
-        return getPreferenceBooleanValue(SipConfigManager.ENABLE_TURN) ? 1 : 0;
     }
 
     /**

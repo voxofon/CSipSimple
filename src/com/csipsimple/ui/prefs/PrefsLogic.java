@@ -35,9 +35,9 @@ import com.csipsimple.api.SipManager;
 import com.csipsimple.utils.Compatibility;
 import com.csipsimple.utils.CustomDistribution;
 import com.csipsimple.utils.ExtraPlugins;
+import com.csipsimple.utils.ExtraPlugins.DynCodecInfos;
 import com.csipsimple.utils.PreferencesProviderWrapper;
 import com.csipsimple.utils.PreferencesWrapper;
-import com.csipsimple.utils.ExtraPlugins.DynCodecInfos;
 import com.csipsimple.utils.Theme;
 import com.csipsimple.utils.video.VideoUtilsWrapper;
 import com.csipsimple.utils.video.VideoUtilsWrapper.VideoCaptureCapability;
@@ -240,11 +240,13 @@ public class PrefsLogic {
                 }
                 
                 if(!pfw.isAdvancedUser()) {
-                    
+
+                    pfh.hidePreference(NWK_NAT_TRAVERSAL_KEY, SipConfigManager.ICE_AGGRESSIVE);
                     pfh.hidePreference(NWK_NAT_TRAVERSAL_KEY, SipConfigManager.ENABLE_TURN);
                     pfh.hidePreference(NWK_NAT_TRAVERSAL_KEY, SipConfigManager.TURN_SERVER);
                     pfh.hidePreference(NWK_NAT_TRAVERSAL_KEY, SipConfigManager.TURN_USERNAME);
                     pfh.hidePreference(NWK_NAT_TRAVERSAL_KEY, SipConfigManager.TURN_PASSWORD);
+                    pfh.hidePreference(NWK_NAT_TRAVERSAL_KEY, SipConfigManager.TURN_TRANSPORT);
                     
                     pfh.hidePreference(NWK_TRANSPORT_KEY, SipConfigManager.ENABLE_TCP);
                     pfh.hidePreference(NWK_TRANSPORT_KEY, SipConfigManager.ENABLE_UDP);

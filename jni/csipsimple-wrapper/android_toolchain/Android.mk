@@ -72,25 +72,18 @@ endif
 ifeq ($(MY_USE_AMR),1)
 	LOCAL_STATIC_LIBRARIES += android_dyn_opencore
 endif
-ifeq ($(MY_USE_SILK),1)
-	LOCAL_STATIC_LIBRARIES += pj_silk_codec
-endif
+#ifeq ($(MY_USE_SILK),1)
+#	LOCAL_STATIC_LIBRARIES += pj_silk_codec
+#endif
 
 ifeq ($(MY_USE_ZRTP),1)
 	LOCAL_STATIC_LIBRARIES += zrtp4pj
 endif
 
 ifeq ($(MY_USE_TLS),1)
-ifeq ($(MY_USE_STATIC_SSL),1)
 # This is to do builds with full openssl built in.
-# Not use unless you know what you do and create a ssl_static target in openssl lib
 	LOCAL_STATIC_LIBRARIES += ssl_static crypto_static
 	LOCAL_LDLIBS += -lz
-else
-# Normal mainstream users mode
-	LOCAL_STATIC_LIBRARIES += crypto_ec_static
-	LOCAL_SHARED_LIBRARIES += libssl libcrypto
-endif
 endif
 
 

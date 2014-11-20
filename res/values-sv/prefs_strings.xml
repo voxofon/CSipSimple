@@ -29,6 +29,8 @@
   <string name="use_3g_disclamer">Din operatör MÅSTE tillåta dig att använda det här alternativet. Observera att mobiloperatör även kan fakturera extra kostnad för dataanvändning.</string>
   <string name="use_edge">Använd EDGE</string>
   <string name="use_gprs">Använd GPRS</string>
+  <string name="use_roaming">Vid roaming</string>
+  <string name="use_roaming_desc">När android upptäcker roaming</string>
   <string name="lock_wifi">Lås Wi-Fi</string>
   <string name="lock_wifi_desc">Förhindra overksam WiFi när SIP är ansluten</string>
   <string name="lock_wifi_perfs">Lås vid höga preferenser</string>
@@ -62,6 +64,8 @@
   <string name="turn_username_desc">Användarnamn för autentisering av TURN</string>
   <string name="turn_password">Lösenord för TURN</string>
   <string name="turn_password_desc">Lösenord för autentisering av TURN</string>
+  <string name="turn_transport">TURN-transport</string>
+  <string name="turn_transport_desc">Transportprotokoll för TURN-funktionen</string>
   <string name="enable_stun">Aktivera STUN</string>
   <string name="enable_stun_desc">Slå på funktionen STUN</string>
   <string name="enable_stun2">Använd nytt STUN-format</string>
@@ -139,8 +143,8 @@
   <string name="audio_quality">Ljudkvalitet</string>
   <string name="audio_volume">Volym</string>
   <string name="codecs">Kodekar</string>
-  <string name="echo_cancellation">Ekoannulering</string>
-  <string name="echo_cancellation_desc">Aktivera ekoannulering</string>
+  <string name="echo_cancellation">Ekodämpning</string>
+  <string name="echo_cancellation_desc">Aktivera ekodämpning</string>
   <string name="enable_vad">Detektering av röstljud</string>
   <string name="enable_vad_desc">Aktivera detektering av röstljud</string>
   <string name="enable_ns">Brusreducering</string>
@@ -161,8 +165,8 @@
   <string name="snd_clock_rate_desc">Frekvens för ljudkanal</string>
   <string name="snd_ptime">Frame ptime</string>
   <string name="snd_ptime_desc">Anges mindre ptime kommer det normalt att minska fördröjningen</string>
-  <string name="echo_cancellation_tail">Skugga för ekoannulering</string>
-  <string name="echo_cancellation_tail_desc">Skugglängd för ekoannulering</string>
+  <string name="echo_cancellation_tail">Skugga för ekodämpning</string>
+  <string name="echo_cancellation_tail_desc">Skugglängd för ekodämpning</string>
   <string name="echo_mode">Ekoläge</string>
   <string name="echo_mode_desc">Algoritm för eko</string>
   <string name="codecs_desc">Prioritet (0 är inaktiverad)</string>
@@ -278,6 +282,9 @@
   <string name="start_with_text_dialer_desc">Starta med textuppringare</string>
   <string name="use_alternate_unlocker">Använd inte glid för att svara</string>
   <string name="use_alternate_unlocker_desc">Använd knappar istället för glid för att emot inkommande samtal</string>
+  <string name="slider">Drag finger</string>
+  <string name="buttons">Knappar</string>
+  <string name="glowpad">GlowPad</string>
   <string name="keep_awake_incall">Håll vaken medan samtal</string>
   <string name="keep_awake_incall_desc">Fixar om du får hackig ljud när skärmen stängs av medan gör samtal via WIFI</string>
   <string name="use_partial_wake_lock">Använd delvis låsväckning</string>
@@ -327,8 +334,10 @@
   <string name="vid_out_auto_transmit_desc">Skicka video automatiskt från enhet</string>
   <string name="use_video">Använd video</string>
   <string name="use_video_desc">Skicka video automatiskt från enhet</string>
+  <string name="play_waittone_on_hold">Väntton vid parkering</string>
+  <string name="play_waittone_on_hold_desc">Spela en ton när motparten parkerar samtalet</string>
   <!--Settings modes-->
-  <string name="expert_preferences">Expertläga</string>
+  <string name="expert_preferences">Expertläge</string>
   <string name="normal_preferences">Vanligt läge</string>
   <!--Generic-->
   <string name="leave_minus_1_default">Ange -1 för standard</string>
