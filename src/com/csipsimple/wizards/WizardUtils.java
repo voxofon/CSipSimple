@@ -157,7 +157,7 @@ public class WizardUtils {
         }
 		
 		if(CustomDistribution.distributionWantsOtherProviders()) {
-            
+
 		}else {
 			WizardInfo info = CustomDistribution.getCustomDistributionWizard();
 			if(info != null) {

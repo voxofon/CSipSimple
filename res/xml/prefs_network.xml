@@ -148,6 +148,12 @@
             android:summary="@string/enable_ice_desc"
             android:title="@string/enable_ice" />
         <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="enable_ice"
+            android:key="ice_aggressive"
+            android:summary="@string/ice_aggressive_desc"
+            android:title="@string/ice_aggressive" />
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="enable_stun"
             android:summary="@string/enable_stun_desc"
@@ -192,6 +198,15 @@
             android:summary="@string/turn_password_desc"
             android:title="@string/turn_password" >
         </EditTextPreference>
+
+        <ListPreference
+            android:defaultValue="0"
+            android:dependency="enable_turn"
+            android:entries="@array/transport_choices"
+            android:entryValues="@array/transport_values"
+            android:key="turn_transport"
+            android:summary="@string/turn_transport_desc"
+            android:title="@string/turn_transport" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="for_incoming"
@@ -226,6 +241,11 @@
             android:key="use_anyway_in"
             android:summary="@string/use_anyway_desc"
             android:title="@string/use_anyway" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="use_roaming_in"
+            android:summary="@string/use_roaming_desc"
+            android:title="@string/use_roaming" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="for_outgoing"
@@ -260,6 +280,11 @@
             android:key="use_anyway_out"
             android:summary="@string/use_anyway_desc"
             android:title="@string/use_anyway" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="use_roaming_out"
+            android:summary="@string/use_roaming_desc"
+            android:title="@string/use_roaming" />
     </PreferenceCategory>
 
 </PreferenceScreen>
