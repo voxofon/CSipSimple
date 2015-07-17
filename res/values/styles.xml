@@ -74,9 +74,9 @@
         <item name="android:layout_margin">5dp</item>
     </style>
 
-    <style name="DarkTheme" parent="Theme.Sherlock"></style>
+    <style name="DarkTheme" parent="Theme.AppCompat"></style>
 
-    <style name="DarkTheme.Dialog" parent="Theme.Sherlock.Dialog">
+    <style name="DarkTheme.Dialog" parent="Theme.AppCompat.Dialog">
 
         <!-- TODO : use android:attr on 11 -->
         <item name="actionBarItemBackground">@drawable/abs__item_background_holo_dark</item>
@@ -87,7 +87,7 @@
         -->
     </style>
 
-    <style name="DarkTheme.NoTitle" parent="Theme.Sherlock.NoActionBar">
+    <style name="DarkTheme.NoTitle" parent="Theme.AppCompat.NoActionBar">
         <item name="actionBarItemBackground">@drawable/abs__item_background_holo_dark</item>
     </style>
 
