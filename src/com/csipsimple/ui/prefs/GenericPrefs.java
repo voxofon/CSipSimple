@@ -31,12 +31,11 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.csipsimple.R;
 import com.csipsimple.utils.Log;
 
 @SuppressWarnings("deprecation")
-public abstract class GenericPrefs extends SherlockPreferenceActivity implements
+public abstract class GenericPrefs extends AppCompatPreferenceActivity implements
         OnSharedPreferenceChangeListener, IPreferenceHelper {
 
     private static final String THIS_FILE = "GenericPrefs";

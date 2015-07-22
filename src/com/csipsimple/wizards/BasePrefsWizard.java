@@ -21,18 +21,21 @@
 
 package com.csipsimple.wizards;
 
+import java.util.List;
+import java.util.UUID;
+
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.csipsimple.R;
 import com.csipsimple.api.SipManager;
 import com.csipsimple.api.SipProfile;
@@ -43,9 +46,6 @@ import com.csipsimple.ui.prefs.GenericPrefs;
 import com.csipsimple.utils.Log;
 import com.csipsimple.utils.PreferencesWrapper;
 import com.csipsimple.wizards.WizardUtils.WizardInfo;
-
-import java.util.List;
-import java.util.UUID;
 
 public class BasePrefsWizard extends GenericPrefs {
 	

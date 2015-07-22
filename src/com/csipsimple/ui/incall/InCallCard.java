@@ -21,14 +21,26 @@
 
 package com.csipsimple.ui.incall;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.webrtc.videoengine.ViERenderer;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.internal.view.menu.MenuBuilder.Callback;
+import android.support.v7.widget.ActionMenuPresenter;
+import android.support.v7.widget.ActionMenuView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,12 +54,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.internal.utils.UtilityWrapper;
-import com.actionbarsherlock.internal.view.menu.ActionMenuPresenter;
-import com.actionbarsherlock.internal.view.menu.ActionMenuView;
-import com.actionbarsherlock.internal.view.menu.MenuBuilder;
-import com.actionbarsherlock.internal.view.menu.MenuBuilder.Callback;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.csipsimple.R;
 import com.csipsimple.api.SipCallSession;
 import com.csipsimple.api.SipCallSession.MediaState;
@@ -65,11 +71,6 @@ import com.csipsimple.utils.ExtraPlugins.DynActivityPlugin;
 import com.csipsimple.utils.Log;
 import com.csipsimple.utils.PreferencesProviderWrapper;
 
-import org.webrtc.videoengine.ViERenderer;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class InCallCard extends FrameLayout implements OnClickListener, Callback {
 

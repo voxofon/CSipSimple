@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2010-2012 Regis Montoya (aka r3gis - www.r3gis.fr)
- * This file is part of CSipSimple.
+ * This file is part of ActionBarSherlock2.
  *
  *  CSipSimple is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,35 +16,13 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with CSipSimple.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with ActionBarSherlock2.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.csipsimple.ui.account;
+package com.actionbarsherlock.internal.utils;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 
-import com.csipsimple.R;
-import com.csipsimple.utils.Compatibility;
 
-public class AccountsEditList extends AppCompatActivity {
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.accounts_view);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == Compatibility.getHomeMenuId()) {
-			finish();
-			return true;
-		}
-		return false;
-	}
-
+public class Utility8 extends Utility7 {
+    
 }

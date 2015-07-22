@@ -22,6 +22,12 @@
 
 package com.csipsimple.ui.incall;
 
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.webrtc.videoengine.ViERenderer;
+
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -41,6 +47,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.RemoteException;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -53,7 +60,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.csipsimple.R;
 import com.csipsimple.api.ISipService;
 import com.csipsimple.api.MediaState;
@@ -73,16 +79,9 @@ import com.csipsimple.utils.CallsUtils;
 import com.csipsimple.utils.DialingFeedback;
 import com.csipsimple.utils.Log;
 import com.csipsimple.utils.PreferencesProviderWrapper;
-import com.csipsimple.utils.Theme;
 import com.csipsimple.utils.keyguard.KeyguardWrapper;
 
-import org.webrtc.videoengine.ViERenderer;
-
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class InCallActivity extends SherlockFragmentActivity implements IOnCallActionTrigger, 
+public class InCallActivity extends AppCompatActivity implements IOnCallActionTrigger, 
         IOnLeftRightChoice, ProximityDirector, OnDtmfListener {
     private static final int QUIT_DELAY = 3000;
     private final static String THIS_FILE = "InCallActivity";
@@ -377,10 +376,10 @@ public class InCallActivity extends SherlockFragmentActivity implements IOnCallA
     }
 
     private void applyTheme() {
-        Theme t = Theme.getCurrentTheme(this);
-        if (t != null) {
-            // TODO ...
-        }
+//        Theme t = Theme.getCurrentTheme(this);
+//        if (t != null) {
+//            // TODO ...
+//        }
     }
 
 

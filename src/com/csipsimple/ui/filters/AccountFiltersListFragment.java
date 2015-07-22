@@ -22,6 +22,8 @@
 package com.csipsimple.ui.filters;
 
 
+import java.util.ArrayList;
+
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -33,11 +35,15 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -46,9 +52,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.csipsimple.R;
 import com.csipsimple.api.SipManager;
 import com.csipsimple.api.SipProfile;
@@ -56,8 +59,6 @@ import com.csipsimple.models.Filter;
 import com.csipsimple.widgets.CSSListFragment;
 import com.csipsimple.widgets.DragnDropListView;
 import com.csipsimple.widgets.DragnDropListView.DropListener;
-
-import java.util.ArrayList;
 
 public class AccountFiltersListFragment extends CSSListFragment {
     private static final String THIS_FILE = "AccountFiltersListFragment";
@@ -142,7 +143,7 @@ public class AccountFiltersListFragment extends CSSListFragment {
 	// Menu stuff
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(R.string.add_filter)
+		MenuItemCompat.setShowAsAction(menu.add(R.string.add_filter)
                 .setIcon(android.R.drawable.ic_menu_add)
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
@@ -151,8 +152,8 @@ public class AccountFiltersListFragment extends CSSListFragment {
                         return true;
                     }
                 })
-                .setShowAsAction(
-                        MenuItem.SHOW_AS_ACTION_IF_ROOM );
+                ,
+                MenuItem.SHOW_AS_ACTION_IF_ROOM );
 
 		
 		super.onCreateOptionsMenu(menu, inflater);

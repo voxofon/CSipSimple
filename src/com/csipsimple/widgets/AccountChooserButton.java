@@ -21,16 +21,24 @@
 
 package com.csipsimple.widgets;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.internal.view.menu.MenuPopupHelper;
+import android.support.v7.widget.ActionMenuView.OnMenuItemClickListener;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -39,10 +47,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.internal.view.View_HasStateListenerSupport;
 import com.actionbarsherlock.internal.view.View_OnAttachStateChangeListener;
-import com.actionbarsherlock.internal.view.menu.MenuBuilder;
-import com.actionbarsherlock.internal.view.menu.MenuPopupHelper;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.csipsimple.R;
 import com.csipsimple.api.SipProfile;
 import com.csipsimple.utils.AccountListUtils;
@@ -52,10 +56,6 @@ import com.csipsimple.utils.CallHandlerPlugin.OnLoadListener;
 import com.csipsimple.utils.Compatibility;
 import com.csipsimple.utils.Log;
 import com.csipsimple.wizards.WizardUtils;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class AccountChooserButton extends LinearLayout implements OnClickListener, View_HasStateListenerSupport {
 
@@ -204,68 +204,70 @@ public class AccountChooserButton extends LinearLayout implements OnClickListene
 
     @Override
     public void onClick(View v) {
-        Log.d(THIS_FILE, "Click the account chooser button");
-
-        if(mPopupMenu == null) {
-            mPopupMenu = new MenuPopupHelper(getContext(), mMenuBuilder, this, false);
-            mPopupMenu.setForceShowIcon(true);
-        }
-        mMenuBuilder.removeGroup(R.id.menu_accbtn_accounts);
-
-        Cursor c = getContext().getContentResolver().query(SipProfile.ACCOUNT_URI, ACC_PROJECTION, SipProfile.FIELD_ACTIVE + "=?", new String[] {
-                "1"
-        }, null);
-        
-        boolean hasSomeSip = false;
-        if (c != null) {
-            try {
-                if (c.moveToFirst()) {
-                    do {
-                        final SipProfile account = new SipProfile(c);
-                        AccountStatusDisplay accountStatusDisplay = AccountListUtils
-                                .getAccountDisplay(getContext(), account.id);
-                        if (accountStatusDisplay.availableForCalls) {
-                            BitmapDrawable drawable = new BitmapDrawable(getResources(), 
-                                    WizardUtils.getWizardBitmap(getContext(), account));
-                            
-                            MenuItem item = mMenuBuilder.add(R.id.menu_accbtn_accounts, MenuBuilder.NONE, MenuBuilder.NONE, account.display_name);
-                            item.setIcon(drawable);
-                            item.setOnMenuItemClickListener(new OnAccountMenuItemListener(account));
-                            
-                            hasSomeSip = true;
-                        }
-                    } while (c.moveToNext());
-                }
-            } catch (Exception e) {
-                Log.e(THIS_FILE, "Error on looping over sip profiles", e);
-            } finally {
-                c.close();
-            }
-        }
-        if(!hasSomeSip) {
-            MenuItem item = mMenuBuilder.add(R.id.menu_accbtn_accounts, MenuBuilder.NONE, MenuBuilder.NONE, R.string.acct_inactive);
-            item.setIcon(android.R.drawable.ic_dialog_alert);
-        }
-
-        if (showExternals) {
-            // Add external rows
-            Map<String, String> callHandlers = CallHandlerPlugin.getAvailableCallHandlers(getContext());
-            boolean includeGsm = Compatibility.canMakeGSMCall(getContext()); 
-            for (String packageName : callHandlers.keySet()) {
-                Log.d(THIS_FILE, "Compare "+packageName+" to "+telCmp.flattenToString());
-                // We ensure that GSM integration is not prevented
-                if(!includeGsm && packageName.equals(telCmp.flattenToString())) {
-                    continue;
-                }
-                // Else we can add
-                CallHandlerPlugin ch = new CallHandlerPlugin(getContext());
-                ch.loadFrom(packageName, null, new OnPluginLoadListener());
-            }
-        }
-
-        mPopupMenu.show();
+//    	//FIX: closing for now. Should not be used in voxofon.
+//        Log.d(THIS_FILE, "Click the account chooser button");
+//
+//
+//        if(mPopupMenu == null) {
+//            mPopupMenu = new MenuPopupHelper(getContext(), mMenuBuilder, this, false);
+//            mPopupMenu.setForceShowIcon(true);
+//        }
+//        mMenuBuilder.removeGroup(R.id.menu_accbtn_accounts);
+//
+//        Cursor c = getContext().getContentResolver().query(SipProfile.ACCOUNT_URI, ACC_PROJECTION, SipProfile.FIELD_ACTIVE + "=?", new String[] {
+//                "1"
+//        }, null);
+//
+//        boolean hasSomeSip = false;
+//        if (c != null) {
+//            try {
+//                if (c.moveToFirst()) {
+//                    do {
+//                        final SipProfile account = new SipProfile(c);
+//                        AccountStatusDisplay accountStatusDisplay = AccountListUtils
+//                                .getAccountDisplay(getContext(), account.id);
+//                        if (accountStatusDisplay.availableForCalls) {
+//                            BitmapDrawable drawable = new BitmapDrawable(getResources(), 
+//                                    WizardUtils.getWizardBitmap(getContext(), account));
+//
+//                            MenuItem item = mMenuBuilder.add(R.id.menu_accbtn_accounts, MenuBuilder.NONE, MenuBuilder.NONE, account.display_name);
+//                            item.setIcon(drawable);
+//                            item.setOnMenuItemClickListener(new OnAccountMenuItemListener(account));
+//
+//                            hasSomeSip = true;
+//                        }
+//                    } while (c.moveToNext());
+//                }
+//            } catch (Exception e) {
+//                Log.e(THIS_FILE, "Error on looping over sip profiles", e);
+//            } finally {
+//                c.close();
+//            }
+//        }
+//        if(!hasSomeSip) {
+//            MenuItem item = mMenuBuilder.add(R.id.menu_accbtn_accounts, MenuBuilder.NONE, MenuBuilder.NONE, R.string.acct_inactive);
+//            item.setIcon(android.R.drawable.ic_dialog_alert);
+//        }
+//
+//        if (showExternals) {
+//            // Add external rows
+//            Map<String, String> callHandlers = CallHandlerPlugin.getAvailableCallHandlers(getContext());
+//            boolean includeGsm = Compatibility.canMakeGSMCall(getContext()); 
+//            for (String packageName : callHandlers.keySet()) {
+//                Log.d(THIS_FILE, "Compare "+packageName+" to "+telCmp.flattenToString());
+//                // We ensure that GSM integration is not prevented
+//                if(!includeGsm && packageName.equals(telCmp.flattenToString())) {
+//                    continue;
+//                }
+//                // Else we can add
+//                CallHandlerPlugin ch = new CallHandlerPlugin(getContext());
+//                ch.loadFrom(packageName, null, new OnPluginLoadListener());
+//            }
+//        }
+//
+//        mPopupMenu.show();
     }
-    
+
     private class OnPluginLoadListener implements OnLoadListener {
         @Override
         public void onLoad(CallHandlerPlugin ch) {
@@ -284,9 +286,10 @@ public class AccountChooserButton extends LinearLayout implements OnClickListene
 
         @Override
         public void run() {
-            MenuItem item = mMenuBuilder.add(R.id.menu_accbtn_accounts, Menu.NONE, Menu.NONE,  ch.getLabel().toString());
-            item.setIcon(ch.getIconDrawable());
-            item.setOnMenuItemClickListener(new OnAccountMenuItemListener(ch.getFakeProfile()));
+        //FIX: closing for now. Not expecting to be used in voxofon.
+//            MenuItem item = mMenuBuilder.add(R.id.menu_accbtn_accounts, Menu.NONE, Menu.NONE,  ch.getLabel().toString());
+//            item.setIcon(ch.getIconDrawable());
+//            item.setOnMenuItemClickListener(new OnAccountMenuItemListener(ch.getFakeProfile()));
         }
     }
 

@@ -21,14 +21,19 @@
 
 package com.csipsimple.ui.prefs;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import android.content.Context;
 import android.content.Intent;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.telephony.TelephonyManager;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.csipsimple.R;
 import com.csipsimple.api.SipConfigManager;
 import com.csipsimple.api.SipManager;
@@ -42,11 +47,6 @@ import com.csipsimple.utils.Theme;
 import com.csipsimple.utils.video.VideoUtilsWrapper;
 import com.csipsimple.utils.video.VideoUtilsWrapper.VideoCaptureCapability;
 import com.csipsimple.utils.video.VideoUtilsWrapper.VideoCaptureDeviceInfo;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class PrefsLogic {
 

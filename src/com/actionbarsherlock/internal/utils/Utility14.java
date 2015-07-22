@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2010-2012 Regis Montoya (aka r3gis - www.r3gis.fr)
- * This file is part of CSipSimple.
+ * This file is part of ActionBarSherlock2.
  *
  *  CSipSimple is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,37 +16,27 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with CSipSimple.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with ActionBarSherlock2.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.csipsimple.ui.account;
+package com.actionbarsherlock.internal.utils;
 
-import android.os.Bundle;
+import android.annotation.TargetApi;
+import android.view.ViewConfiguration;
+import android.widget.LinearLayout;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.csipsimple.api.SipProfile;
+@TargetApi(14)
+public class Utility14 extends Utility11 {
 
-public class AccountEditFragment extends SherlockFragment {
+    @Override
+    public boolean hasPermanentMenuKey(ViewConfiguration vcfg) {
+        return vcfg.hasPermanentMenuKey();
+    }
+    
 
-	public static AccountEditFragment newInstance(long profileId) {
-		AccountEditFragment f = new AccountEditFragment();
-
-		// Supply index input as an argument.
-		Bundle args = new Bundle();
-		args.putLong(SipProfile.FIELD_ID, profileId);
-		f.setArguments(args);
-
-		return f;
-	}
-	
-	/*
-	private OnQuitListener onQuitListener;
-	public void setOnQuitListener(OnQuitListener l) {
-		onQuitListener = l;
-	}
-	public interface OnQuitListener {
-		public void onQuit();
-		public void onShowProfile(long profileId);
-	}
-	*/
+//    @Override
+//    public void setLinearLayoutDividerPadding(LinearLayout l, int padding) {
+//        l.setDividerPadding(padding);
+//        super.setLinearLayoutDividerPadding(l, padding);
+//    }
 }

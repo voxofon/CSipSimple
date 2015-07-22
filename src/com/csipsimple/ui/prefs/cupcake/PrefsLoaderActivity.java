@@ -22,9 +22,9 @@
 package com.csipsimple.ui.prefs.cupcake;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.MenuItem;
 import com.csipsimple.ui.prefs.GenericPrefs;
 import com.csipsimple.ui.prefs.PrefsLogic;
 import com.csipsimple.utils.Compatibility;
