@@ -96,12 +96,13 @@ public class SipNotifications {
 	@SuppressWarnings("deprecation")
     private void searchNotificationPrimaryText(Context aContext) {
 	    try {
-	        Notification ntf = new Notification();
-	        ntf.setLatestEventInfo(aContext, TO_SEARCH, "", null);
-	        LinearLayout group = new LinearLayout(aContext);
-	        ViewGroup event = (ViewGroup) ntf.contentView.apply(aContext, group);
-	        recurseSearchNotificationPrimaryText(event);
-	        group.removeAllViews();
+	    //Not used. Commenting out to fix api 23 build
+//	        Notification ntf = new Notification();
+//	        ntf.setLatestEventInfo(aContext, TO_SEARCH, "", null);
+//	        LinearLayout group = new LinearLayout(aContext);
+//	        ViewGroup event = (ViewGroup) ntf.contentView.apply(aContext, group);
+//	        recurseSearchNotificationPrimaryText(event);
+//	        group.removeAllViews();
 	    } catch (Exception e) {
 	        Log.e(THIS_FILE, "Can't retrieve the color", e);
 	    }
