@@ -21,9 +21,6 @@
 
 package com.csipsimple.wizards;
 
-import java.util.List;
-import java.util.UUID;
-
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,6 +43,9 @@ import com.csipsimple.ui.prefs.GenericPrefs;
 import com.csipsimple.utils.Log;
 import com.csipsimple.utils.PreferencesWrapper;
 import com.csipsimple.wizards.WizardUtils.WizardInfo;
+
+import java.util.List;
+import java.util.UUID;
 
 public class BasePrefsWizard extends GenericPrefs {
 	
@@ -143,9 +143,10 @@ public class BasePrefsWizard extends GenericPrefs {
 		}
 		wizardId = wId;
 		wizard.setParent(this);
-		if(getSupportActionBar() != null) {
-		    getSupportActionBar().setIcon(WizardUtils.getWizardIconRes(wizardId));
-		}
+		//Commenting out to prevent crash. Not an important thing
+//		if(getSupportActionBar() != null) {
+//		    getSupportActionBar().setIcon(WizardUtils.getWizardIconRes(wizardId));
+//		}
 		return true;
 	}
 
