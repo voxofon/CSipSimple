@@ -454,7 +454,7 @@
 
         <receiver android:name="com.csipsimple.service.HeadsetButtonReceiver" />
 
-        <!-- Widget -->
+        <!-- Widget
         <receiver
             android:name="com.csipsimple.widgets.AccountWidgetProvider"
             android:icon="@drawable/appwidget_preview"
@@ -499,6 +499,7 @@
             </intent-filter>
         </activity>
 
+        -->
         <!-- Messages -->
         <activity
             android:name="com.csipsimple.ui.messages.MessageActivity"
