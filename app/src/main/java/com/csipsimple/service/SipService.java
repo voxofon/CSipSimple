@@ -585,7 +585,11 @@ public class SipService extends Service {
 	        		adjustVolumeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 	        		startActivity(adjustVolumeIntent);
 	        	}else {
-	        		pjService.adjustStreamVolume(Compatibility.getInCallStream(pjService.mediaManager.doesUserWantBluetooth()), direction, flags);
+					boolean requestBT = false;
+					if (pjService.mediaManager != null) {
+						requestBT = pjService.mediaManager.doesUserWantBluetooth();
+					}
+					pjService.adjustStreamVolume(Compatibility.getInCallStream(requestBT), direction, flags);
 	        	}
     		}
 		}
