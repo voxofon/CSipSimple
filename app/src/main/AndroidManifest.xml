@@ -26,7 +26,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <!-- not used in Vox  <uses-permission android:name="android.permission.WRITE_CONTACTS" /> -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <!--
     <uses-permission android:name="android.permission.CALL_PRIVILEGED" /> 
@@ -37,15 +37,14 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
-    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <!-- not used in Vox <uses-permission android:name="android.permission.READ_LOGS" /> -->
     <uses-permission android:name="android.permission.USE_SIP" />
     <uses-permission android:name="android.permission.CONFIGURE_SIP" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <!-- not used in Vox <uses-permission android:name="android.permission.WRITE_CALL_LOG" /> -->
     <!--
     Not taken into account?
     Regarding Diane's comment this was never implemented 
